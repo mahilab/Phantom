@@ -21,23 +21,23 @@ Eta = [eta1;eta2;eta3];
 Jm  = [Jm1;Jm2;Jm3];
 
 % joint angles
-Q = [q1;q2;q3];
+Q   = [q1;q2;q3];
 % joint velocities
-Qd = [q1d;q2d;q3d];
+Qd  = [q1d;q2d;q3d];
 % joint accelerations
 Qdd = [q1dd;q2dd;q3dd];
 
 % joint damping
-B = [b1;b2;b3];
+B  = [b1;b2;b3];
 % joint kinetic friction
 Fk = [fk1;fk2;fk3];
 
 % rigidbody centers of mass
-Pc_a  =  [Pc_ax Pc_ay Pc_az].';
-Pc_c  =  [Pc_cx Pc_cy Pc_cz].';
+Pc_a  = [Pc_ax Pc_ay Pc_az].';
+Pc_c  = [Pc_cx Pc_cy Pc_cz].';
 Pc_be = [Pc_bex Pc_bey Pc_bez].';
 Pc_df = [Pc_dfx Pc_dfy Pc_dfz].';
-Pc_g = [Pc_gx Pc_gy Pc_gz].';
+Pc_g  = [Pc_gx Pc_gy Pc_gz].';
 
 % rigidbody inertia tensors
 Ic_a  = [Ic_axx -Ic_axy -Ic_axz;
@@ -74,21 +74,21 @@ DH_table2 = [0 0 0 q1;
              l3 0 0 q2-q3];
 [~,T_array2] = dh2tf(DH_table2);
             
-g0 = [0; 0; g];
+g0 = [0; 0; -g];
 
 %% Lagrangian Dynamics
 
 % setup Lagrangian first chain
-m1 = [m_g,m_be,m_a];
+m1  = [m_g,m_be,m_a];
 Pc1 = {Pc_g,Pc_be,Pc_a};
 Ic1 = {Ic_g,Ic_be,Ic_a};
 [~, ~, ~, ~, k1, u1] = dynamics_lagrangian(m1,Pc1,Ic1,T_array1,Q,Qd,Qdd,g0,0);
 
 % setup Lagrangian second chain
-m2 = [m_g,m_df,m_c];
+m2  = [m_g,m_df,m_c];
 Pc2 = {Pc_g,Pc_df,Pc_c};
 Ic2 = {Ic_g,Ic_df,Ic_c};
-[~, ~, ~, ~, k2, u2] = dynamics_lagrangian(m1,Pc1,Ic2,T_array2,Q,Qd,Qdd,g0,0);
+[~, ~, ~, ~, k2, u2] = dynamics_lagrangian(m2,Pc2,Ic2,T_array2,Q,Qd,Qdd,g0,0);
 
 % sum kinetic/potential energies (k2(1) = k1(1) & u2(1) = u1(1), so skip)
 K = simplify( k1(1) + k1(2) + k1(3) + k2(2) + k2(3) ); 
