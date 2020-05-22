@@ -95,6 +95,17 @@ public:
         Qdd_Qd.val = Qd_Q.val = Qdd = Qd = Q = Tau = Vector3d::Zero();
     }
 
+    std::vector<double> fk(Vector3d q){
+        // std::vector<double> ee_pos = {cos(q(0))*(l2*sin(q(1) + q(2)) + l1*cos(q(1))),
+        //                               sin(q(0))*(l2*sin(q(1) + q(2)) + l1*cos(q(1))),
+        //                                         l1*sin(q(1)) - l2*cos(q(1) + q(2))};
+
+        std::vector<double> ee_pos = {cos(q(0))*(l1*cos(q(1))+l2*sin(q(2)-mahi::util::PI/2)),
+                                      sin(q(0))*(l1*cos(q(1))+l2*sin(q(2)-mahi::util::PI/2)),
+                                                  l1*sin(q(1))+l2*cos(q(2)-mahi::util::PI/2)};
+        return ee_pos; 
+    }
+
 public:
 
     Matrix3d M, V;

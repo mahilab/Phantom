@@ -50,3 +50,10 @@ EXPORT void get_positions(double* Q) {
     for (int i = 0; i < 3; ++i)
         Q[i] = g_phantom.Q[i];
 }
+
+EXPORT void get_fk(double* ee_pos) {
+    std::lock_guard<std::mutex> lock(g_mtx);
+    std::vector<double> ee_pos_vec = g_phantom.fk(g_phantom.Q);
+    for (int i = 0; i < 3; ++i)
+        ee_pos[i] = ee_pos_vec[i];
+}

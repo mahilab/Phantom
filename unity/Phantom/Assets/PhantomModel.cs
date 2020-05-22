@@ -19,6 +19,10 @@ public class PhantomModel : MonoBehaviour
     public Transform frameA;
     public Transform frameC;
 
+    [Header("EE Position")]
+    public double[] ee_pos = new double[3];
+    public GameObject ee_sphere;
+
     public Transform[] spools = new Transform[3];
 
     double[] radians = new double[3];
@@ -69,6 +73,9 @@ public class PhantomModel : MonoBehaviour
         angles.z = theta[1] - theta[2];
         frameC.transform.localEulerAngles = angles;
 
+        Dll.get_fk(ee_pos);
+        ee_sphere.transform.localPosition = new Vector3((float)-ee_pos[1],(float)ee_pos[0],(float)-ee_pos[2]);
+
         if (Input.GetKeyDown(KeyCode.R))
         {
             Dll.stop();
@@ -86,6 +93,8 @@ public class PhantomModel : MonoBehaviour
         public static extern void get_positions(double[] Q);   
         [DllImport("phantom")]
         public static extern void set_torques(double[] Tau);
+        [DllImport("phantom")]
+        public static extern void get_fk(double[] EE_pos);
     }
 }
 
