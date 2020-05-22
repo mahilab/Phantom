@@ -1,0 +1,35 @@
+Mass properties of phantom1.5
+     Configuration: Default
+     Coordinate system: {2}
+
+Mass = 0.26784227 kilograms
+
+Volume = 0.00008185 cubic meters
+
+Surface area = 0.04288260 square meters
+
+Center of mass: ( meters )
+	X = -0.03518875
+	Y = -0.00006280
+	Z = 0.00232416
+
+Principal axes of inertia and principal moments of inertia: ( kilograms * square meters )
+Taken at the center of mass.
+	 Ix = ( 0.99947689,  0.00048485, -0.03233760)   	Px = 0.00011255
+	 Iy = (-0.03233462, -0.00523560, -0.99946339)   	Py = 0.00082296
+	 Iz = (-0.00065390,  0.99998618, -0.00521718)   	Pz = 0.00091668
+
+Moments of inertia: ( kilograms * square meters )
+Taken at the center of mass and aligned with the output coordinate system.
+	Lxx = 0.00011330	Lxy = 0.00000041	Lxz = -0.00002296
+	Lyx = 0.00000041	Lyy = 0.00091667	Lyz = 0.00000048
+	Lzx = -0.00002296	Lzy = 0.00000048	Lzz = 0.00082222
+
+Moments of inertia: ( kilograms * square meters )
+Taken at the output coordinate system.
+	Ixx = 0.00011474	Ixy = 0.00000100	Ixz = -0.00004487
+	Iyx = 0.00000100	Iyy = 0.00124978	Iyz = 0.00000044
+	Izx = -0.00004487	Izy = 0.00000044	Izz = 0.00115387
+
+One or more components have overridden mass properties:
+	maxon_re25<Default>

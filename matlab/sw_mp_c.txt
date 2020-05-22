@@ -1,0 +1,32 @@
+Mass properties of phantom1.5
+     Configuration: Default
+     Coordinate system: {3'}
+
+Mass = 0.02614630 kilograms
+
+Volume = 0.00000905 cubic meters
+
+Surface area = 0.01397761 square meters
+
+Center of mass: ( meters )
+	X = 0.00000000
+	Y = 0.10477739
+	Z = 0.00000000
+
+Principal axes of inertia and principal moments of inertia: ( kilograms * square meters )
+Taken at the center of mass.
+	 Ix = ( 0.00000000,  1.00000000,  0.00000000)   	Px = 0.00000089
+	 Iy = (-0.00001070,  0.00000000, -1.00000000)   	Py = 0.00013138
+	 Iz = (-1.00000000,  0.00000000,  0.00001070)   	Pz = 0.00013177
+
+Moments of inertia: ( kilograms * square meters )
+Taken at the center of mass and aligned with the output coordinate system.
+	Lxx = 0.00013177	Lxy = 0.00000000	Lxz = 0.00000000
+	Lyx = 0.00000000	Lyy = 0.00000089	Lyz = 0.00000000
+	Lzx = 0.00000000	Lzy = 0.00000000	Lzz = 0.00013138
+
+Moments of inertia: ( kilograms * square meters )
+Taken at the output coordinate system.
+	Ixx = 0.00041881	Ixy = 0.00000000	Ixz = 0.00000000
+	Iyx = 0.00000000	Iyy = 0.00000089	Iyz = 0.00000000
+	Izx = 0.00000000	Izy = 0.00000000	Izz = 0.00041842
