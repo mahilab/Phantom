@@ -20,7 +20,7 @@ void simulation() {
     while (!g_stop) {
         {
             std::lock_guard<std::mutex> lock(g_mtx);
-            g_phantom.update(clk.restart().as_seconds());
+            g_phantom.update2(clk.restart().as_seconds());
         }
         timer.wait();
     }

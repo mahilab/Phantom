@@ -14,3 +14,5 @@ target_link_libraries(phantom mahi::robo mahi::com)
 
 add_executable(phantom_test main.cpp)
 target_link_libraries(phantom_test mahi::robo mahi::com)
+
+add_executable(auto_diff auto_diff.cpp)

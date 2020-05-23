@@ -58,6 +58,7 @@ joint.Iczz = eval(findVal('Lzz'));
 joint.Ic = [+joint.Icxx -joint.Icxy -joint.Icxz;
             -joint.Icyx +joint.Icyy -joint.Icyz;
             -joint.Iczx -joint.Iczy +joint.Iczz];
+joint.Ic_min = [joint.Icxx joint.Icxy joint.Icxz joint.Icyy joint.Icyz joint.Iczz]; 
 
 % Moments of inertia taken at the output coordinate system 
 % (I) [kg*m^2]
