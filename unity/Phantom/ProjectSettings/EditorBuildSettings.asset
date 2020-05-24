@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/phantom.unity
+    path: Assets/Phantom/phantom.unity
     guid: aab88b2d5801f79409108072d244c3b2
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 324abada201dc8347962ec18adf10c5f,

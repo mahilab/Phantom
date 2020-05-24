@@ -38,7 +38,7 @@ public class PhantomModel : MonoBehaviour
     void Update()
     {
 
-        tau[0] = 0.01*Input.GetAxis("Horizontal");
+        tau[0] = 0.05*Input.GetAxis("Horizontal");
         tau[1] = 0.1*Input.GetAxis("Vertical");
         tau[2] = 0.1*Input.GetAxis("Vertical2");
 

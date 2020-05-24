@@ -66,8 +66,9 @@ for ii = 1:size(DH_table,1)
         sinTheta*cosAlpha cosTheta*cosAlpha -sinAlpha -sinAlpha*d;
         sinTheta*sinAlpha cosTheta*sinAlpha cosAlpha cosAlpha*d;
         0 0 0 1];
+    T = simplify(T);
     Ti{ii} = T;
-    T0N = T0N*T;
+    T0N = simplify(T0N*T);
     T0i{ii} = T0N;
 end
 
