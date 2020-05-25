@@ -1,91 +1,94 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Runtime.InteropServices;
 
 public class PhantomModel : MonoBehaviour
 {
 
-    public bool simulate = true;
+    [Header("Options")]
+    public bool showTransforms = false;
+    public bool showWorkspace  = false;
 
     [Header("Joint Angles")]
-    public float[] theta = new float[3];
+    public float[] Q = new float[3];
 
     [Header("Transmission Ratios")]
     public float[] eta = {13.3f,11.2f,11.2f};
 
-    [Header("Transforms")]
+    [Header("References")]
     public Transform[] frames = new Transform[3];
-    public Transform frameA;
-    public Transform frameC;
-
+    public Transform frame2p;
+    public Transform frame3p;
     public Transform[] spools = new Transform[3];
 
-    double[] radians = new double[3];
-    public double[] tau = new double[3];
+    public GameObject workspace;
+    public TransformRenderer[] transformRenderers;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        Dll.start();
-    }
+    public PhantomCableCapstan cableCapstan1;
+    public PhantomCableCapstan cableCapstan2;
+    public PhantomCableSpool cableSpool1;
+    public PhantomCableSpool cableSpool2;
+    public PhantomCableSpool cableSpool3;
 
-    void OnApplicationQuit() {
-        Dll.stop();
+    Vector3 cableSpool1_init;
+    Vector3 cableSpool2_init;
+    Vector3 cableSpool3_init;
+
+    void Awake() {
+        cableSpool1_init = cableSpool1.transform.localPosition;
+        cableSpool2_init = cableSpool2.transform.localPosition;
+        cableSpool2_init = cableSpool3.transform.localPosition;
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
+        workspace.SetActive(showWorkspace);
+        foreach (var tr in transformRenderers)
+            tr.enabled = showTransforms; 
 
-        tau[0] = 0.05*Input.GetAxis("Horizontal");
-        tau[1] = 0.1*Input.GetAxis("Vertical");
-        tau[2] = 0.1*Input.GetAxis("Vertical2");
+        UpdateAngles();
+        UpdateCable1();
+        // UpdateCable2();
+    }
 
-        Dll.set_torques(tau);
-        Dll.get_positions(radians);
-
-
+    void UpdateAngles() {
         Vector3 angles;
         for (int i = 0; i < 3; ++i) {
-
-            if (simulate)
-                theta[i] = (float)radians[i] * Mathf.Rad2Deg;
-
             angles = frames[i].transform.localEulerAngles;
-            angles.z = theta[i];
+            angles.z = Q[i];
             frames[i].transform.localEulerAngles = angles;
-
             angles = spools[i].transform.localEulerAngles;
-            angles.z = -theta[i] * eta[i];
+            angles.z = -Q[i] * eta[i];
             spools[i].transform.localEulerAngles = angles;
         }
 
-        angles = frameA.transform.localEulerAngles;
-        angles.z = theta[2] - theta[1];
-        frameA.transform.localEulerAngles = angles;
+        angles = frame2p.transform.localEulerAngles;
+        angles.z = Q[2] - Q[1]; 
+        frame2p.transform.localEulerAngles = angles;
 
-        angles = frameC.transform.localEulerAngles;
-        angles.z = theta[1] - theta[2];
-        frameC.transform.localEulerAngles = angles;
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Dll.stop();
-            Dll.start();
-        }
+        angles = frame3p.transform.localEulerAngles;
+        angles.z = Q[1] - Q[2];
+        frame3p.transform.localEulerAngles = angles;
     }
 
-    /// Dll Imports
-    public class Dll {
-        [DllImport("phantom")] 
-        public static extern void start();
-        [DllImport("phantom")] 
-        public static extern void stop();
-        [DllImport("phantom")]
-        public static extern void get_positions(double[] Q);   
-        [DllImport("phantom")]
-        public static extern void set_torques(double[] Tau);
+    void UpdateCable1() {
+        var temp = cableSpool1_init;
+        temp.z -= (Q[0] * eta[0] / cableSpool1.pitch);
+        cableSpool1.transform.localPosition = temp;
+        cableCapstan1.h1 = cableSpool1.transform.position.y - cableCapstan1.transform.position.y;
+        cableCapstan1.h2 = cableCapstan1.h1 - cableSpool1.hTotal;
+        cableCapstan1.UpdateGeometry(Q[0]);
+    }
+
+    void UpdateCable2() {
+        var temp = cableSpool2_init;
+        temp.z -= (Q[1] * eta[1] / cableSpool2.pitch);
+        cableSpool2.transform.localPosition = temp;
+
+        temp = cableSpool3_init;
+        temp.z -= (Q[2] * eta[2] / cableSpool3.pitch);
+        cableSpool3.transform.localPosition = temp;
     }
 }
 
