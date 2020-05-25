@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PhantomCableSpool : MonoBehaviour
 {
-
     [Header("Parameters")]
     public float revs  = 3;
     public float pitch = 396850;
@@ -26,12 +25,12 @@ public class PhantomCableSpool : MonoBehaviour
 
     void UpdateGeometry() {
         line.positionCount = k;
-        hTotal = direction * 360 * revs / pitch;
+        hTotal = 360 * revs / pitch;
         for (int i = 0; i < k; ++i)
         {
             float t = (float)i / (k-1);
             float a = Mathf.Lerp(0, 360*  revs, t) * Mathf.Deg2Rad;
-            float h = Mathf.Lerp(0, hTotal, t);
+            float h = Mathf.Lerp(0, direction * hTotal, t);
             Vector3 pos = new Vector3();
             pos.x = (spoolRadius + cableRadius) * Mathf.Cos(a);
             pos.y = (spoolRadius + cableRadius) * Mathf.Sin(a);

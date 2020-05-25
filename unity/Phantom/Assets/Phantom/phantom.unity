@@ -471,13 +471,14 @@ MonoBehaviour:
   angleEnd: -180
   angleQa: -90
   angleQb: 0
-  k: 50
   model: {fileID: 997594206}
   segment1: {fileID: 1800896505}
   segment2: {fileID: 820382370}
   segment3: {fileID: 0}
   h1: 0
   h2: 0
+  h3: 0
+  h4: 0
 --- !u!1 &249406648
 GameObject:
   m_ObjectHideFlags: 0
@@ -1763,7 +1764,7 @@ LineRenderer:
   m_Positions: []
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.0015
+    widthMultiplier: 0.002
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -2363,7 +2364,7 @@ LineRenderer:
   m_Positions: []
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.0015
+    widthMultiplier: 0.002
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -2764,7 +2765,7 @@ LineRenderer:
   m_Positions: []
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.0015
+    widthMultiplier: 0.002
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -3077,7 +3078,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 997594205}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 896ad6f6e41b3cd4dafec5dd66370b18, type: 3}
   m_Name: 
@@ -3349,17 +3350,18 @@ MonoBehaviour:
   capstanRadius: 0.05715
   cableRadius: 0.0005
   hTotal: 0.015113
-  angleStart: 135
-  angleEnd: -135
+  angleStart: 118
+  angleEnd: -118
   angleQa: 90
   angleQb: 0
-  k: 50
   model: {fileID: 997594206}
   segment1: {fileID: 1917791757}
   segment2: {fileID: 609782887}
   segment3: {fileID: 897742774}
   h1: 0
   h2: 0
+  h3: 0
+  h4: 0
 --- !u!1 &1029298786
 GameObject:
   m_ObjectHideFlags: 0
@@ -4121,7 +4123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 979d501f0ed82e24fa707c1e41884420, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  revs: 3
+  revs: 4
   pitch: 396850
   spoolRadius: 0.005
   cableRadius: 0.0005
@@ -4170,7 +4172,7 @@ LineRenderer:
   m_Positions: []
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.0015
+    widthMultiplier: 0.002
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -6367,7 +6369,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1753872416}
   m_LocalRotation: {x: -0.7071068, y: -0.7071068, z: 0, w: 0}
-  m_LocalPosition: {x: -0, y: -0.0635, z: 0.0443}
+  m_LocalPosition: {x: -0, y: -0.0635, z: 0.04323}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 171302353}
@@ -6385,7 +6387,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 979d501f0ed82e24fa707c1e41884420, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  revs: 3
+  revs: 4
   pitch: 396850
   spoolRadius: 0.005
   cableRadius: 0.0005
@@ -6434,7 +6436,7 @@ LineRenderer:
   m_Positions: []
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.0015
+    widthMultiplier: 0.002
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -6704,7 +6706,7 @@ LineRenderer:
   m_Positions: []
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.0015
+    widthMultiplier: 0.002
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -7195,7 +7197,7 @@ LineRenderer:
   m_Positions: []
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.0015
+    widthMultiplier: 0.002
     widthCurve:
       serializedVersion: 2
       m_Curve:

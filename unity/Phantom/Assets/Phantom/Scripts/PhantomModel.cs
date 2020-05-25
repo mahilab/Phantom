@@ -37,7 +37,7 @@ public class PhantomModel : MonoBehaviour
     void Awake() {
         cableSpool1_init = cableSpool1.transform.localPosition;
         cableSpool2_init = cableSpool2.transform.localPosition;
-        cableSpool2_init = cableSpool3.transform.localPosition;
+        cableSpool3_init = cableSpool3.transform.localPosition;
     }
 
     // Update is called once per frame
@@ -49,7 +49,7 @@ public class PhantomModel : MonoBehaviour
 
         UpdateAngles();
         UpdateCable1();
-        // UpdateCable2();
+        UpdateCable2();
     }
 
     void UpdateAngles() {
@@ -76,19 +76,25 @@ public class PhantomModel : MonoBehaviour
         var temp = cableSpool1_init;
         temp.z -= (Q[0] * eta[0] / cableSpool1.pitch);
         cableSpool1.transform.localPosition = temp;
+
         cableCapstan1.h1 = cableSpool1.transform.position.y - cableCapstan1.transform.position.y;
-        cableCapstan1.h2 = cableCapstan1.h1 - cableSpool1.hTotal;
+        cableCapstan1.h2 = cableCapstan1.h1 + cableSpool1.hTotal;
         cableCapstan1.UpdateGeometry(Q[0]);
+
     }
 
     void UpdateCable2() {
         var temp = cableSpool2_init;
-        temp.z -= (Q[1] * eta[1] / cableSpool2.pitch);
+        temp.z += (Q[1] * eta[1] / cableSpool2.pitch);
         cableSpool2.transform.localPosition = temp;
-
         temp = cableSpool3_init;
-        temp.z -= (Q[2] * eta[2] / cableSpool3.pitch);
+        temp.z += (Q[2] * eta[2] / cableSpool3.pitch);
         cableSpool3.transform.localPosition = temp;
+        cableCapstan2.h1 = frames[0].InverseTransformPoint(cableCapstan2.transform.position).x - frames[0].InverseTransformPoint(cableSpool3.transform.position).x;
+        cableCapstan2.h2 = cableCapstan2.h1 + cableSpool3.hTotal;
+        cableCapstan2.h3 = cableCapstan2.h1 + (frames[0].InverseTransformPoint(cableSpool3.transform.position).x - frames[0].InverseTransformPoint(cableSpool2.transform.position).x);
+        cableCapstan2.h4 = cableCapstan2.h3 + cableSpool2.hTotal;
+        cableCapstan2.UpdateGeometry(Q[2],Q[1]);
     }
 }
 

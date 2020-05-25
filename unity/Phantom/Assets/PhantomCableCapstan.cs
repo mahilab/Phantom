@@ -12,7 +12,6 @@ public class PhantomCableCapstan : MonoBehaviour
     public float angleEnd   = -180;
     public float angleQa    = -90;
     public float angleQb;
-    public int k = 50;
 
     [Header("References")]
     public PhantomModel model;
@@ -23,9 +22,13 @@ public class PhantomCableCapstan : MonoBehaviour
     [Header("Computed")]
     public float h1;
     public float h2;
+    public float h3;
+    public float h4;
 
     public void UpdateGeometry(float qa) {
 
+
+        int k = Mathf.Max( (int)((Mathf.Abs((angleQa - qa) - angleStart)) / 5 ), 4 );
         segment1.positionCount = k;
         for (int i = 0; i < k; ++i) {
             float t = (float)i / (k-1);
@@ -38,6 +41,7 @@ public class PhantomCableCapstan : MonoBehaviour
             segment1.SetPosition(i, pos);            
         }
 
+        k = Mathf.Max( (int)((Mathf.Abs(angleEnd - (angleQa - qa))) / 5 ), 4 );
         segment2.positionCount = k;
         for (int i = 0; i < k; ++i) {
             float t = (float)i / (k-1);
@@ -51,10 +55,46 @@ public class PhantomCableCapstan : MonoBehaviour
         }
     }
 
-    public void UpdateGeometry(float qa, float qb) {
+    public void UpdateGeometry(float qa, float qb) {           
 
+        int k = Mathf.Max( (int)((Mathf.Abs((angleQa - qa) - angleStart)) / 5 ), 4 );
+        segment1.positionCount = k;
+        for (int i = 0; i < k; ++i) {
+            float t = (float)i / (k-1);
+            float a = Mathf.Lerp(angleStart, angleQa - qa, t) * Mathf.Deg2Rad;
+            float h = Mathf.Lerp(0,-h1,t);
+            Vector3 pos = new Vector3();
+            pos.x = (capstanRadius + cableRadius) * Mathf.Cos(a);
+            pos.y = (capstanRadius + cableRadius) * Mathf.Sin(a);
+            pos.z = h;
+            segment1.SetPosition(i, pos);            
+        }
 
+        k = Mathf.Max( (int)((Mathf.Abs((angleQb - qb) - (angleQa - qa))) / 5 ), 4 );
+        segment2.positionCount = k;
+        for (int i = 0; i < k; ++i) {
+            float t = (float)i / (k-1);
+            float a = Mathf.Lerp(angleQa - qa, angleQb - qb, t) * Mathf.Deg2Rad;
+            float h = Mathf.Lerp(-h2,-h3,t);
+            Vector3 pos = new Vector3();
+            pos.x = (capstanRadius + cableRadius) * Mathf.Cos(a);
+            pos.y = (capstanRadius + cableRadius) * Mathf.Sin(a);
+            pos.z = h;
+            segment2.SetPosition(i, pos);  
+        }
+
+        k = Mathf.Max( (int)((Mathf.Abs(angleEnd - (angleQb - qb))) / 5 ), 4 );
+        segment3.positionCount = k;
+        for (int i = 0; i < k; ++i) {
+            float t = (float)i / (k-1);
+            float a = Mathf.Lerp(angleQb - qb, angleEnd, t) * Mathf.Deg2Rad;
+            float h = Mathf.Lerp(-h4,-hTotal,t);
+            Vector3 pos = new Vector3();
+            pos.x = (capstanRadius + cableRadius) * Mathf.Cos(a);
+            pos.y = (capstanRadius + cableRadius) * Mathf.Sin(a);
+            pos.z = h;
+            segment3.SetPosition(i, pos);  
+        }
 
     }
-
 }
