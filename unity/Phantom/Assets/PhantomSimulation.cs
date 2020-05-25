@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
+using System;
 
 public class PhantomSimulation : MonoBehaviour
 {
@@ -50,7 +51,8 @@ public class PhantomSimulation : MonoBehaviour
         Dll.get_fk(ee_pos);
         ee_sphere.transform.localPosition = new Vector3((float)-ee_pos[1],(float)ee_pos[0],(float)-ee_pos[2]);
 
-        Dll.get_ik(ee_pos,theta_d);
+        double[] q_double = {(double)model.Q[0]*Mathf.Deg2Rad,(double)model.Q[1]*Mathf.Deg2Rad,(double)model.Q[2]*Mathf.Deg2Rad};
+        Dll.get_ik(ee_pos,theta_d,q_double);
         theta_d[0] = theta_d[0]*Mathf.Rad2Deg;
         theta_d[1] = theta_d[1]*Mathf.Rad2Deg;
         theta_d[2] = theta_d[2]*Mathf.Rad2Deg;
@@ -76,7 +78,7 @@ public class PhantomSimulation : MonoBehaviour
         [DllImport("phantom")]
         public static extern void get_fk(double[] EE_pos);
         [DllImport("phantom")]
-        public static extern void get_ik(double[] EE_pos, double[] Theta_d);
+        public static extern void get_ik(double[] EE_pos, double[] Theta_d, double[] Curr_angles);
     }
 
 }

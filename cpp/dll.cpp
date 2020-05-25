@@ -12,6 +12,7 @@ using mahi::util::Clock;
 #define EXPORT extern "C" __declspec(dllexport)
 
 Phantom g_phantom;
+// std::vector<double> 
 std::thread g_thread;
 std::mutex g_mtx;
 std::atomic_bool g_stop_sim;
@@ -59,10 +60,11 @@ EXPORT void get_fk(double* ee_pos) {
     std::copy(ee_pos_vec.begin(),ee_pos_vec.end(),ee_pos);
 }
 
-EXPORT void get_ik(const double* ee_pos, double* theta_d) {
+EXPORT void get_ik(const double* ee_pos, double* theta_d, double* curr_angles) {
     Point ee_point{ee_pos[0], ee_pos[1], ee_pos[2]};
+    std::vector<double> curr_angles_vec(curr_angles,curr_angles+sizeof(curr_angles)/sizeof(curr_angles[0]));
     std::lock_guard<std::mutex> lock(g_mtx);
-    std::vector<double> theta_d_ = g_phantom.ik(ee_point);
+    std::vector<double> theta_d_ = g_phantom.ik(ee_point, curr_angles_vec);
     std::copy(theta_d_.begin(),theta_d_.end(),theta_d);
 }
 

@@ -205,18 +205,39 @@ public:
         return ee_pos; 
     }
 
-    std::vector<double> ik(Point ee_pos){
+    std::vector<double> ik(Point ee_pos, std::vector<double> ref_angles){
         constexpr double l1 = 0.210;
         constexpr double l2 = 0.170;
-        
-        double theta1 = atan2(ee_pos.y,ee_pos.x);
+
         double l_star = sqrt(ee_pos.x*ee_pos.x + ee_pos.y*ee_pos.y);
         double ee_theta = atan2(ee_pos.z,l_star);
         double lh = sqrt(ee_pos.z*ee_pos.z + l_star*l_star);
-        double theta2 = acos((l2*l2-l1*l1-lh*lh)/(-2*l1*lh))+ee_theta;
-        double theta3 = acos((lh*lh-l1*l1-l2*l2)/(-2*l1*l2))+theta2-mahi::util::PI/2;
 
-        return {theta1, theta2, theta3};
+        double theta1_1 = atan2(ee_pos.y,ee_pos.x);
+        double theta2_1 = acos((l2*l2-l1*l1-lh*lh)/(-2*l1*lh))+ee_theta;
+        double theta3_1 = acos((lh*lh-l1*l1-l2*l2)/(-2*l1*l2))+theta2_1-mahi::util::PI/2;
+
+        double theta1_2 = mahi::util::wrap_to_pi(atan2(ee_pos.y,ee_pos.x)-mahi::util::PI);
+        double theta2_2 = mahi::util::PI-ee_theta+acos((l2*l2-l1*l1-lh*lh)/(-2*l1*lh));
+        double theta3_2 = acos((lh*lh-l1*l1-l2*l2)/(-2*l1*l2))+theta2_2-mahi::util::PI/2;
+
+        double theta1_min = -90  * mahi::util::DEG2RAD;
+        double theta1_max =  90  * mahi::util::DEG2RAD;
+        double theta2_min = -124 * mahi::util::DEG2RAD;
+        double theta2_max =  119 * mahi::util::DEG2RAD;
+        double theta3_min = -29  * mahi::util::DEG2RAD;  
+        double theta3_max =  214 * mahi::util::DEG2RAD;
+
+        bool set1_valid = (theta1_1 < theta1_max) && (theta1_1 > theta1_min) && (theta2_1 < theta2_max) && (theta2_1 > theta2_min) && (theta3_1 < theta3_max) && (theta3_1 > theta3_min) && ((theta3_1 - theta2_1) <  55.0 * DEG2RAD) && ((theta3_1 - theta2_1) > -65.0 * DEG2RAD);
+
+        bool set2_valid = (theta1_2 < theta1_max) && (theta1_2 > theta1_min) && (theta2_2 < theta2_max) && (theta2_2 > theta2_min) && (theta3_2 < theta3_max) && (theta3_2 > theta3_min) && ((theta3_2 - theta2_2) <  55.0 * DEG2RAD) && ((theta3_2 - theta2_2) > -65.0 * DEG2RAD);
+
+        double sum_err1 = (ref_angles[0]-theta1_1)*(ref_angles[0]-theta1_1) + (ref_angles[1]-theta2_1)*(ref_angles[1]-theta2_1) + (ref_angles[2]-theta3_1)*(ref_angles[2]-theta3_1);
+        double sum_err2 = (ref_angles[0]-theta1_2)*(ref_angles[0]-theta1_2) + (ref_angles[1]-theta2_2)*(ref_angles[1]-theta2_2) + (ref_angles[2]-theta3_2)*(ref_angles[2]-theta3_2);
+        
+        if ((sum_err1 < sum_err2) && set1_valid) return {theta1_1, theta2_1, theta3_1};
+        else if (set2_valid) return {theta1_2, theta2_2, theta3_2};
+        else return {0,0,0};
     }
 
 public:
