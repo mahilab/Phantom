@@ -193,14 +193,30 @@ public:
     }
 
     std::vector<double> fk(Vector3d q){
-        // std::vector<double> ee_pos = {cos(q(0))*(l2*sin(q(1) + q(2)) + l1*cos(q(1))),
-        //                               sin(q(0))*(l2*sin(q(1) + q(2)) + l1*cos(q(1))),
-        //                                         l1*sin(q(1)) - l2*cos(q(1) + q(2))};
+        constexpr double l1 = 0.210;
+        constexpr double l2 = 0.170;
+        double theta1 = q(0);
+        double theta2 = q(1);
+        double theta3 = q(2);
+        std::vector<double> ee_pos = {cos(theta1)*(l1*cos(theta2) + l2*sin(theta3)),
+                                      sin(theta1)*(l1*cos(theta2) + l2*sin(theta3)),
+                                      l1*sin(theta2) - l2*cos(theta3)};
 
-        std::vector<double> ee_pos = {cos(q(0))*(l1*cos(q(1))+l2*sin(q(2)-mahi::util::PI/2)),
-                                      sin(q(0))*(l1*cos(q(1))+l2*sin(q(2)-mahi::util::PI/2)),
-                                                  l1*sin(q(1))+l2*cos(q(2)-mahi::util::PI/2)};
         return ee_pos; 
+    }
+
+    std::vector<double> ik(Point ee_pos){
+        constexpr double l1 = 0.210;
+        constexpr double l2 = 0.170;
+        
+        double theta1 = atan2(ee_pos.y,ee_pos.x);
+        double l_star = sqrt(ee_pos.x*ee_pos.x + ee_pos.y*ee_pos.y);
+        double ee_theta = atan2(ee_pos.z,l_star);
+        double lh = sqrt(ee_pos.z*ee_pos.z + l_star*l_star);
+        double theta2 = acos((l2*l2-l1*l1-lh*lh)/(-2*l1*lh))+ee_theta;
+        double theta3 = acos((lh*lh-l1*l1-l2*l2)/(-2*l1*l2))+theta2-mahi::util::PI/2;
+
+        return {theta1, theta2, theta3};
     }
 
 public:

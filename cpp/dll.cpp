@@ -53,13 +53,18 @@ EXPORT void get_positions(double* Q) {
         Q[i] = g_phantom.Q[i];
 }
 
-<<<<<<< HEAD
 EXPORT void get_fk(double* ee_pos) {
     std::lock_guard<std::mutex> lock(g_mtx);
     std::vector<double> ee_pos_vec = g_phantom.fk(g_phantom.Q);
-    for (int i = 0; i < 3; ++i)
-        ee_pos[i] = ee_pos_vec[i];
-=======
+    std::copy(ee_pos_vec.begin(),ee_pos_vec.end(),ee_pos);
+}
+
+EXPORT void get_ik(const double* ee_pos, double* theta_d) {
+    Point ee_point{ee_pos[0], ee_pos[1], ee_pos[2]};
+    std::lock_guard<std::mutex> lock(g_mtx);
+    std::vector<double> theta_d_ = g_phantom.ik(ee_point);
+    std::copy(theta_d_.begin(),theta_d_.end(),theta_d);
+}
 
 class Tuner : public Application {
 public:
@@ -95,5 +100,4 @@ EXPORT bool open_tuner()
         return true;
     }
     return false;
->>>>>>> f72b862da55cd79702a55b5258cafb3a29ccee9d
 }

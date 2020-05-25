@@ -5,11 +5,14 @@
 % gimbal frame and a cell array phantom_T of the 4x4 homogeneous
 % transformations for this robot
 
-syms l1 l2 x_ee y_ee z_ee
+syms l1 l2 theta1 theta2 theta3
 
-theta1 = atan2(y_ee,x_ee);
-l_star = sqrt(x_ee^2 + y_ee^2);
-ee_theta = atan2(z_ee,l_star);
-lh = sqrt(z_ee^2 + l_star^2);
-theta2 = acos((l2^2-l1^2-lh^2)/(-2*l1*lh))+ee_theta;
-theta3 = acos((lh^2-l1^2-l2^2)/(-2*l1*l2))+theta2-pi/2;
+alpha = [     0,   pi/2,             0, pi/2].';
+a     = [     0,      0,            l1,    0].';
+d     = [     0,      0,             0,   l2].';
+theta = [theta1, theta2, theta3-theta2,    0].';
+
+dh = [a alpha d theta];
+
+[phantom_T0N,~,~] = dh2tf(dh);
+phantom_T0N(1:3,4)

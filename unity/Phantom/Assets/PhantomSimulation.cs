@@ -10,6 +10,13 @@ public class PhantomSimulation : MonoBehaviour
     double[] radians = new double[3];
     double[] tau = new double[3];
 
+    [Header("EE Position")]
+    public double[] ee_pos = new double[3];
+    public GameObject ee_sphere;
+
+    [Header("IK Angles")]
+    public double[] theta_d = new double[3];
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,6 +46,14 @@ public class PhantomSimulation : MonoBehaviour
             var s = Dll.open_tuner();   
             print(s);
         }
+
+        Dll.get_fk(ee_pos);
+        ee_sphere.transform.localPosition = new Vector3((float)-ee_pos[1],(float)ee_pos[0],(float)-ee_pos[2]);
+
+        Dll.get_ik(ee_pos,theta_d);
+        theta_d[0] = theta_d[0]*Mathf.Rad2Deg;
+        theta_d[1] = theta_d[1]*Mathf.Rad2Deg;
+        theta_d[2] = theta_d[2]*Mathf.Rad2Deg;
     }
 
     void Restart() {
@@ -58,6 +73,10 @@ public class PhantomSimulation : MonoBehaviour
         public static extern void set_torques(double[] Tau);
         [DllImport("phantom")]
         public static extern bool open_tuner();
+        [DllImport("phantom")]
+        public static extern void get_fk(double[] EE_pos);
+        [DllImport("phantom")]
+        public static extern void get_ik(double[] EE_pos, double[] Theta_d);
     }
 
 }

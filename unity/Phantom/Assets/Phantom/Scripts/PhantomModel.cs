@@ -12,6 +12,10 @@ public class PhantomModel : MonoBehaviour
     [Header("Joint Angles")]
     public float[] Q = new float[3];
 
+    [Header("EE Position")]
+    public double[] ee_pos = new double[3];
+    public GameObject ee_sphere;
+
     [Header("Transmission Ratios")]
     public float[] eta = {13.3f,11.2f,11.2f};
 
