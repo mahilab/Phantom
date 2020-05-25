@@ -1,9 +1,11 @@
 #include "Phantom.hpp"
 #include <Mahi/Util.hpp>
+#include <Mahi/Gui.hpp>
 #include <thread>
 #include <mutex>
 #include <atomic>
 
+using namespace mahi::gui;
 using mahi::util::Timer;
 using mahi::util::Clock;
 
@@ -12,22 +14,22 @@ using mahi::util::Clock;
 Phantom g_phantom;
 std::thread g_thread;
 std::mutex g_mtx;
-std::atomic_bool g_stop;
+std::atomic_bool g_stop_sim;
 
-void simulation() {
+void simulation_thread() {
     Timer timer(mahi::util::hertz(1000), Timer::Hybrid);
     Clock clk;
-    while (!g_stop) {
+    while (!g_stop_sim) {
         {
             std::lock_guard<std::mutex> lock(g_mtx);
-            g_phantom.update(clk.restart().as_seconds());
+            g_phantom.update2(clk.restart().as_seconds());
         }
         timer.wait();
     }
 }
 
 EXPORT void stop() {
-    g_stop = true;
+    g_stop_sim = true;
     if (g_thread.joinable())
         g_thread.join();
 }
@@ -35,8 +37,8 @@ EXPORT void stop() {
 EXPORT void start() {
     stop();
     g_phantom = Phantom();
-    g_stop = false;
-    g_thread = std::thread(simulation);
+    g_stop_sim = false;
+    g_thread = std::thread(simulation_thread);
 }
 
 EXPORT void set_torques(double* Tau) {
@@ -51,9 +53,47 @@ EXPORT void get_positions(double* Q) {
         Q[i] = g_phantom.Q[i];
 }
 
+<<<<<<< HEAD
 EXPORT void get_fk(double* ee_pos) {
     std::lock_guard<std::mutex> lock(g_mtx);
     std::vector<double> ee_pos_vec = g_phantom.fk(g_phantom.Q);
     for (int i = 0; i < 3; ++i)
         ee_pos[i] = ee_pos_vec[i];
+=======
+
+class Tuner : public Application {
+public:
+    Tuner() : Application() { }
+    void update() override {
+        static bool keep_open = true;
+        ImGui::Begin("Test",&keep_open);
+        {
+            std::lock_guard<std::mutex> lock(g_mtx);
+            ImGui::DragDouble("K Hardstop", &g_phantom.Khard, 1, 0, 100);
+            ImGui::DragDouble("B Hardstop", &g_phantom.Bhard, 1, 0, 100);
+
+        }
+        ImGui::End();
+        if (!keep_open)
+            quit();
+    }
+};
+
+std::unique_ptr<Tuner> g_tuner = nullptr;
+
+void tuner_thread() {
+    g_tuner = std::make_unique<Tuner>();
+    g_tuner->run();
+    g_tuner = nullptr;
+}
+
+EXPORT bool open_tuner() 
+{
+    if (g_tuner == nullptr) {
+        auto thrd = std::thread(tuner_thread);
+        thrd.detach();
+        return true;
+    }
+    return false;
+>>>>>>> f72b862da55cd79702a55b5258cafb3a29ccee9d
 }
