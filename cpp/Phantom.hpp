@@ -198,6 +198,6 @@ public:
     Integrator<Vector3d> Qdd_Qd, Qd_Q;
 
     static constexpr double g = 9.80665;
-    static constexpr double Khard = 50; 
-    static constexpr double Bhard = 0.5;
+    double Khard = 50; 
+    double Bhard = 0.5;
 };

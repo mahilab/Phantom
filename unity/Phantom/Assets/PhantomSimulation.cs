@@ -33,7 +33,12 @@ public class PhantomSimulation : MonoBehaviour
             model.Q[i] = Mathf.Rad2Deg * (float)radians[i];
 
         if (Input.GetKeyDown(KeyCode.R))
-            Restart();        
+            Restart();     
+
+        if (Input.GetKeyDown(KeyCode.T)) {
+            var s = Dll.open_tuner();   
+            print(s);
+        }
     }
 
     void Restart() {
@@ -51,6 +56,8 @@ public class PhantomSimulation : MonoBehaviour
         public static extern void get_positions(double[] Q);   
         [DllImport("phantom")]
         public static extern void set_torques(double[] Tau);
+        [DllImport("phantom")]
+        public static extern bool open_tuner();
     }
 
 }
