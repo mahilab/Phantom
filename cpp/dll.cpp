@@ -12,7 +12,12 @@ using mahi::util::Clock;
 #define EXPORT extern "C" __declspec(dllexport)
 
 Phantom g_phantom;
-// std::vector<double> 
+std::vector<double> ee_d = {0.21,0,-0.17};
+std::vector<double> q_d = {  0,  0,  0};
+std::vector<double> kps = { 10, 10, 10};
+std::vector<double> kds = {0.5,0.5,0.5};
+std::vector<double> torques = {0,0,0};
+bool control = false;
 std::thread g_thread;
 std::mutex g_mtx;
 std::atomic_bool g_stop_sim;
@@ -23,6 +28,14 @@ void simulation_thread() {
     while (!g_stop_sim) {
         {
             std::lock_guard<std::mutex> lock(g_mtx);
+            if(control){
+                Point ee_point{ee_d[0],ee_d[1],ee_d[2]};
+                std::vector<double> q_curr = {g_phantom.Q[0],g_phantom.Q[1],g_phantom.Q[2]};
+                q_d = g_phantom.ik(ee_point,q_curr);
+                for(size_t i = 0; i < 3; ++i){
+                    g_phantom.Tau[i] = kps[i]*(q_d[i] - g_phantom.Q[i]) - kds[i]*g_phantom.Qd[i];
+                }
+            } 
             g_phantom.update2(clk.restart().as_seconds());
         }
         timer.wait();
@@ -68,6 +81,10 @@ EXPORT void get_ik(const double* ee_pos, double* theta_d, double* curr_angles) {
     std::copy(theta_d_.begin(),theta_d_.end(),theta_d);
 }
 
+EXPORT void get_ee_d(double* ee_d_) {
+    std::copy(ee_d.begin(),ee_d.end(),ee_d_);
+}
+
 class Tuner : public Application {
 public:
     Tuner() : Application() { }
@@ -78,7 +95,16 @@ public:
             std::lock_guard<std::mutex> lock(g_mtx);
             ImGui::DragDouble("K Hardstop", &g_phantom.Khard, 1, 0, 100);
             ImGui::DragDouble("B Hardstop", &g_phantom.Bhard, 1, 0, 100);
-
+            ImGui::DragDouble("Kp 1", &kps[0], 0.1, 0, 100);
+            ImGui::DragDouble("Kp 2", &kps[1], 0.1, 0, 100);
+            ImGui::DragDouble("Kp 3", &kps[2], 0.1, 0, 100);
+            ImGui::DragDouble("Kd 1", &kds[0], 0.01, 0, 10);
+            ImGui::DragDouble("Kd 2", &kds[1], 0.01, 0, 10);
+            ImGui::DragDouble("Kd 3", &kds[2], 0.01, 0, 10);
+            ImGui::DragDouble("EE desired x", &ee_d[0], 0.001, -1, 1);
+            ImGui::DragDouble("EE desired y", &ee_d[1], 0.001, -1, 1);
+            ImGui::DragDouble("EE desired z", &ee_d[2], 0.001, -1, 1);
+            ImGui::Checkbox("Control",&control);
         }
         ImGui::End();
         if (!keep_open)
