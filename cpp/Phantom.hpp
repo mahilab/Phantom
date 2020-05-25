@@ -240,6 +240,28 @@ public:
         else return {0,0,0};
     }
 
+    Matrix3d jacobian(Vector3d q){
+        constexpr double l1 = 0.210;
+        constexpr double l2 = 0.170;
+        double theta1 = q[0]; 
+        double theta2 = q[1]; 
+        double theta3 = q[2];
+        
+        Matrix3d jac;
+        
+        jac(0,0) = -sin(theta1)*(l1*cos(theta2) + l2*sin(theta3));
+        jac(0,1) = -l1*cos(theta1)*sin(theta2);
+        jac(0,2) = l2*cos(theta1)*cos(theta3);
+        jac(1,0) = cos(theta1)*(l1*cos(theta2) + l2*sin(theta3));
+        jac(1,0) = -l1*sin(theta1)*sin(theta2);
+        jac(1,0) = l2*cos(theta3)*sin(theta1);
+        jac(2,0) = 0;
+        jac(2,1) = l1*cos(theta2);
+        jac(2,2) = l2*sin(theta3);
+
+        return jac;
+    }
+
 public:
     Matrix3d M, C;
     Vector3d Q, Qd, Qdd, V, G, Tau;
