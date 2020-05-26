@@ -14,9 +14,11 @@ public class MouseOrbitImproved : MonoBehaviour {
  
     public float distanceMin = .5f;
     public float distanceMax = 15f;
+
+    public int button = 0;
  
-    float x = 0.0f;
-    float y = 0.0f;
+    public float x = 0.0f;
+    public float y = 0.0f;
 
     Quaternion rotation;
  
@@ -33,7 +35,7 @@ public class MouseOrbitImproved : MonoBehaviour {
     void LateUpdate () 
     {
         if (target) {
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButton(button))
                 Orbit();
             Scroll();
         }
@@ -50,14 +52,8 @@ public class MouseOrbitImproved : MonoBehaviour {
 
     void Scroll() {
         distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel"), distanceMin, distanceMax);
-        // RaycastHit hit;
-        // if (Physics.Linecast (target.position, transform.position, out hit)) 
-        // {
-        //     distance -=  hit.distance;
-        // }
         Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
         Vector3 position = rotation * negDistance + target.position;
-
         transform.rotation = rotation;
         transform.position = position;
     }

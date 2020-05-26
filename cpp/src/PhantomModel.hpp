@@ -41,10 +41,10 @@ constexpr double Q23_max  = 65 * DEG2RAD;
 constexpr double Q32_max  = 55 * DEG2RAD;
 
 /// Damping coefficients [Nm*s/rad]
-constexpr double B_coef[3] = {0.001, 0.001, 0.001};
+constexpr double B_coef[3] = {0.0005, 0.0005, 0.0005};
 
 /// Kinetic friction [Nm]
-constexpr double Fk_coef[3] = {0.02, 0.02, 0.02};
+constexpr double Fk_coef[3] = {0.01, 0.01, 0.01};
 
 /// Transmission Ratios [unitless]
 constexpr double Eta[3] = {13.3, 11.2, 11.2};

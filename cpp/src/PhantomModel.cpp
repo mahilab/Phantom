@@ -171,7 +171,7 @@ inline Vector3d collision_torques(const Vector3d& Q, const Vector3d& Qd) {
     qmins[2] = std::max(Q_min[2], Q[1] - Q23_max);  
     qmaxs[2] = std::min(Q_max[2], Q[1] + Q32_max);
     for (int i = 0; i < 3; ++i)
-        col[i] = hardstop(Q[i], Qd[i], qmins[i], qmaxs[i], 1, 0);
+        col[i] = hardstop(Q[i], Qd[i], qmins[i], qmaxs[i], 10, 0.1);
     return col;
 }
 
