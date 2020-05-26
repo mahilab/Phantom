@@ -89,6 +89,13 @@ Matrix3d jacobian(const Vector3d& Q) {
     return J;
 }
 
+inline Matrix3d M_motor() {
+    static Matrix3d _M_motor((Matrix3d() << Jm * Eta[0] * Eta[0], 0, 0,
+                                            0, Jm * Eta[1] * Eta[1], 0,
+                                            0, 0, Jm * Eta[2] * Eta[2] ).finished());
+    return _M_motor;
+}
+
 Matrix3d M(const Vector3d& Q) {
     Matrix3d _M;
     PHANTOM_TRIG;
@@ -105,6 +112,7 @@ Matrix3d M(const Vector3d& Q) {
     _M(2,2) = Ic_a.zz+Ic_c.zz+(Pc_a.x*Pc_a.x)*m_a+(Pc_a.y*Pc_a.y)*m_a+(Pc_df.x*Pc_df.x)*m_df+(Pc_df.y*Pc_df.y)*m_df+(l3*l3)*m_c;
     return _M;
 }
+
 
 Vector3d V(const Vector3d& Q, const Vector3d& Qd) {
     Vector3d _V;
@@ -181,7 +189,10 @@ inline void integrate_state(State& s, const Vector3d& Qdd, double dt) {
 }
 
 void step_dynamics(State& s, double dt) {
+    // collision torques
     Vector3d col = collision_torques(s.Q, s.Qd);
+    /// reflected motor rotor inertia
+    
     Vector3d Qdd = M(s.Q).householderQr().solve(s.Tau + col - V(s.Q,s.Qd) - G(s.Q));
     integrate_state(s, Qdd, dt);
 }

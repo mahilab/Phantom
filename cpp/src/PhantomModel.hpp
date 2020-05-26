@@ -40,6 +40,18 @@ constexpr double Q_max[3] = { 90*DEG2RAD,  119*DEG2RAD, 214*DEG2RAD};
 constexpr double Q23_max  = 65 * DEG2RAD;
 constexpr double Q32_max  = 55 * DEG2RAD;
 
+/// Damping coefficients [Nm*s/rad]
+constexpr double B[3] = {0.001, 0.001, 0.001};
+
+/// Kinetic friction [Nm]
+constexpr double Fk[3] = {0.02, 0.02, 0.02};
+
+/// Transmission Ratios [unitless]
+constexpr double Eta[3] = {13.3, 11.2, 11.2};
+
+/// Motor Rotor Inertia [kg-m^2]
+constexpr double Jm = 1.08e-06;
+
 /// Gravity
 constexpr double g = 9.80665;
 
