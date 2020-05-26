@@ -41,10 +41,10 @@ constexpr double Q23_max  = 65 * DEG2RAD;
 constexpr double Q32_max  = 55 * DEG2RAD;
 
 /// Damping coefficients [Nm*s/rad]
-constexpr double B[3] = {0.001, 0.001, 0.001};
+constexpr double B_coef[3] = {0.001, 0.001, 0.001};
 
 /// Kinetic friction [Nm]
-constexpr double Fk[3] = {0.02, 0.02, 0.02};
+constexpr double Fk_coef[3] = {0.02, 0.02, 0.02};
 
 /// Transmission Ratios [unitless]
 constexpr double Eta[3] = {13.3, 11.2, 11.2};
@@ -99,7 +99,7 @@ Eigen::Matrix<double,5,1> K(const Vector3d& Q, const Vector3d& Qd);
 /// Computes Phantom potential energies
 Eigen::Matrix<double,5,1> U(const Vector3d& Q);
 
-/// Steps Phantom dynamics forward in time
+/// Steps Phantom dynamics forward in time (includes reflected motor inertia, damping, and friction)
 void step_dynamics(State& s, double dt);
 
 /// Steps Phantom dynamics forward in time according to Cavusoglu et al. 2001

@@ -89,13 +89,6 @@ Matrix3d jacobian(const Vector3d& Q) {
     return J;
 }
 
-inline Matrix3d M_motor() {
-    static Matrix3d _M_motor((Matrix3d() << Jm * Eta[0] * Eta[0], 0, 0,
-                                            0, Jm * Eta[1] * Eta[1], 0,
-                                            0, 0, Jm * Eta[2] * Eta[2] ).finished());
-    return _M_motor;
-}
-
 Matrix3d M(const Vector3d& Q) {
     Matrix3d _M;
     PHANTOM_TRIG;
@@ -178,7 +171,7 @@ inline Vector3d collision_torques(const Vector3d& Q, const Vector3d& Qd) {
     qmins[2] = std::max(Q_min[2], Q[1] - Q23_max);  
     qmaxs[2] = std::min(Q_max[2], Q[1] + Q32_max);
     for (int i = 0; i < 3; ++i)
-        col[i] = hardstop(Q[i], Qd[i], qmins[i], qmaxs[i], 1, 0.05);
+        col[i] = hardstop(Q[i], Qd[i], qmins[i], qmaxs[i], 1, 0);
     return col;
 }
 
@@ -189,11 +182,26 @@ inline void integrate_state(State& s, const Vector3d& Qdd, double dt) {
 }
 
 void step_dynamics(State& s, double dt) {
-    // collision torques
-    Vector3d col = collision_torques(s.Q, s.Qd);
-    /// reflected motor rotor inertia
-    
-    Vector3d Qdd = M(s.Q).householderQr().solve(s.Tau + col - V(s.Q,s.Qd) - G(s.Q));
+    // external disturbances and collision torques
+    Vector3d Tau_prime = collision_torques(s.Q, s.Qd);
+    // reflected motor inertia
+    static Matrix3d M_prime((Matrix3d() << Jm * Eta[0] * Eta[0], 0, 0,
+                                           0, Jm * Eta[1] * Eta[1], 0,
+                                           0, 0, Jm * Eta[2] * Eta[2] ).finished());
+    // joint damping
+    Vector3d B;
+    B[0] = B_coef[0]*s.Qd[0];
+    B[1] = B_coef[1]*s.Qd[1];
+    B[2] = B_coef[2]*s.Qd[2];
+    // joint friction
+    Vector3d Fk;
+    Fk[0] = Fk_coef[0]*std::tanh(s.Qd[0]*10);
+    Fk[1] = Fk_coef[1]*std::tanh(s.Qd[1]*10);
+    Fk[2] = Fk_coef[2]*std::tanh(s.Qd[2]*10);
+    // Tau + Tau' = [M(Q) + M'] * Qdd + V(Q,Qdd) + G(Q) + B(Qd) + Fk(Qd)
+    Matrix3d A = M(s.Q) + M_prime;
+    Vector3d b = s.Tau + Tau_prime - V(s.Q,s.Qd) - G(s.Q) - B - Fk;    
+    Vector3d Qdd = A.householderQr().solve(b);
     integrate_state(s, Qdd, dt);
 }
 
