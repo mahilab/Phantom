@@ -1,31 +1,6 @@
-#include <Eigen/Dense>
-#include <Mahi/Util.hpp>
+#include "PhantomUtility.hpp"
 
-using Eigen::Matrix3d;
-using Eigen::Vector3d;
-using mahi::util::DEG2RAD;
 
-template <typename T>
-class Integrator {
-public:
-    Integrator(T initial) : val(initial) { }
-    inline T integrate(T dval_dt, double dt) {
-        val += dt * 0.5 * (m_prev_dval_dt + dval_dt);
-        m_prev_dval_dt = dval_dt;
-        return val;
-    }
-    T val;
-private:
-    T m_prev_dval_dt;
-};
-
-struct Point {
-    double x,y,z;
-};
-
-struct Tensor {
-    double xx, xy, xz, yy, yz, zz;
-};
 
 class Phantom {
 public:
@@ -128,11 +103,6 @@ public:
         constexpr Point Pc_df = {-0.051535410000000, 0.000609030000000, 0.004028730000000};
         constexpr Point Pc_g  = {-0.010485630000000, 0.013963870000000, -0.053808270000000};
 
-        constexpr Tensor Ic_a  = {6.029e-05, 0, 0, 5.7e-07, 0, 6.004e-05};
-        constexpr Tensor Ic_c  = {0.00013177, 0, 0, 8.9e-07, 0, 0.00013138};
-        constexpr Tensor Ic_be = {0.0001133, 4.1e-07, -2.296e-05, 0.00091667, 4.8e-07, 0.00082222};
-        constexpr Tensor Ic_df = {0.0001214, -3.2e-07, -7.45e-06, 0.00026133, 3.23e-06, 0.00015823};
-        constexpr Tensor Ic_g  = {0.0015202, 5.838e-05, 0.00018147, 0.0012112, 0.00023832, 0.00093887};
 
         const double q1 = Q[0]; const double qd1 = Qd[0];
         const double q2 = Q[1]; const double qd2 = Qd[1];
@@ -165,7 +135,6 @@ public:
 
         common_update(dt);
     }
-
 
     inline void common_update(double dt) {
         // hardstops and self collisions

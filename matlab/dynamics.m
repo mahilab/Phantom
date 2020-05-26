@@ -5,7 +5,7 @@
 syms tau1 eta1 Jm1 q1 qd1 qdd1 b1 fk1 ...
      tau2 eta2 Jm2 q2 qd2 qdd2 b2 fk2 ...
      tau3 eta3 Jm3 q3 qd3 qdd3 b3 fk3 ...
-     l2 l3 l4 ...
+     l1 l2 l3 ...
      m_a  Pc_ax  Pc_ay  Pc_az    Ic_axx Ic_axy   Ic_axz  Ic_ayy  Ic_ayz  Ic_azz ...
      m_c  Pc_cx  Pc_cy  Pc_cz    Ic_cxx Ic_cxy   Ic_cxz  Ic_cyy  Ic_cyz  Ic_czz ...
      m_be Pc_bex Pc_bey Pc_bez   Ic_bexx Ic_bexy Ic_bexz Ic_beyy Ic_beyz Ic_bezz ...
@@ -65,8 +65,8 @@ Ic_g  = [Ic_gxx -Ic_gxy -Ic_gxz;
 % chain 1
 DH_table1 = [0 0 0 q1;
              0 pi/2 0 q2;
-             l2 0 0 q3-q2;
-             0 pi/2 l4 0];
+             l1 0 0 q3-q2;
+             0 pi/2 l2 0];
 [phantom_FK,T_array1] = dh2tf(DH_table1);
 
 % chain 2       
@@ -104,6 +104,9 @@ rb_be = parse_sw_mp('sw_mp_be.txt');
 rb_df = parse_sw_mp('sw_mp_df.txt');
 rb_g = parse_sw_mp('sw_mp_g.txt');
 
-M_code = generate_code(M)
-V_code = generate_code(V)
-G_code = generate_code(G)
+M_code = generate_code(M,'_M')
+V_code = generate_code(V,'_V')
+G_code = generate_code(G,'_G')
+
+K_code = generate_code([k1.' k2(2) k2(3)].','_K')
+U_code = generate_code([u1.' u2(2) u2(3)].','_U')

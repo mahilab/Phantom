@@ -22,10 +22,10 @@ public class PhantomSimulation : MonoBehaviour
     [Header("IK Angles")]
     public double[] theta_d = new double[3];
 
-    // private float nextTime = 1;
-    // private float deltaTime = 0.5f;
-    // private int frames;
-    // public float fps;
+    private float nextTime = 1;
+    private float deltaTime = 0.5f;
+    private int frames;
+    public float fps;
 
     // Start is called before the first frame update
     void Start()
@@ -39,12 +39,12 @@ public class PhantomSimulation : MonoBehaviour
 
     void Update() {
 
-        // if (Time.time > nextTime) {
-        //     fps = frames / deltaTime;
-        //     nextTime += deltaTime;
-        //     frames = 0;
-        // }
-        // frames++;
+        if (Time.time > nextTime) {
+            fps = frames / deltaTime;
+            nextTime += deltaTime;
+            frames = 0;
+        }
+        frames++;
 
         tau[0] = 0.05*Input.GetAxis("Horizontal");
         tau[1] = 0.1*Input.GetAxis("Vertical");
@@ -61,31 +61,30 @@ public class PhantomSimulation : MonoBehaviour
             Restart();     
 
         if (Input.GetKeyDown(KeyCode.T)) {
-            var s = Dll.open_tuner();   
-            print(s);
+            print(Dll.open_tuner());   
         }
 
         double[] q_double = {(double)model.Q[0]*Mathf.Deg2Rad,(double)model.Q[1]*Mathf.Deg2Rad,(double)model.Q[2]*Mathf.Deg2Rad};
 
         Dll.get_fk(ee_pos);
-        ee_sphere.transform.localPosition = new Vector3((float)-ee_pos[1],(float)ee_pos[0],(float)-ee_pos[2]);
+        ee_d_sphere.transform.localPosition = new Vector3((float)-ee_pos[1],(float)ee_pos[0],(float)-ee_pos[2]);
 
-        Dll.get_ee_d(ee_d);
-        ee_d_sphere.transform.localPosition = new Vector3((float)-ee_d[1],(float)ee_d[0],(float)-ee_d[2]);
-        double[] ee_check_pos = {0,0,0};
-        double[] compare_pos  = {0.0,0.0,0.0};
-        Dll.get_ik(ee_d, ee_check_pos, q_double);
-        if (arrays_eq(ee_check_pos,compare_pos,3,1e-8)){
-            ee_d_sphere.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
-        }
-        else{
-            ee_d_sphere.GetComponent<Renderer>().material.SetColor("_Color", Color.green);
-        } 
+        // Dll.get_ee_d(ee_d);
+        // ee_d_sphere.transform.localPosition = new Vector3((float)-ee_d[1],(float)ee_d[0],(float)-ee_d[2]);
+        // double[] ee_check_pos = {0,0,0};
+        // double[] compare_pos  = {0.0,0.0,0.0};
+        // Dll.get_ik(ee_d, ee_check_pos, q_double);
+        // if (arrays_eq(ee_check_pos,compare_pos,3,1e-8)){
+        //     ee_d_sphere.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
+        // }
+        // else{
+        //     ee_d_sphere.GetComponent<Renderer>().material.SetColor("_Color", Color.green);
+        // } 
         
-        Dll.get_ik(ee_pos,theta_d,q_double);
-        theta_d[0] = theta_d[0]*Mathf.Rad2Deg;
-        theta_d[1] = theta_d[1]*Mathf.Rad2Deg;
-        theta_d[2] = theta_d[2]*Mathf.Rad2Deg;
+        // Dll.get_ik(ee_pos,theta_d,q_double);
+        // theta_d[0] = theta_d[0]*Mathf.Rad2Deg;
+        // theta_d[1] = theta_d[1]*Mathf.Rad2Deg;
+        // theta_d[2] = theta_d[2]*Mathf.Rad2Deg;
     }
 
     bool arrays_eq(double[] arr1, double[] arr2, int size, double thresh){
@@ -116,10 +115,10 @@ public class PhantomSimulation : MonoBehaviour
         public static extern bool open_tuner();
         [DllImport("phantom")]
         public static extern void get_fk(double[] EE_pos);
-        [DllImport("phantom")]
-        public static extern void get_ik(double[] EE_pos, double[] Theta_d, double[] Curr_angles);
-        [DllImport("phantom")]
-        public static extern void get_ee_d(double[] EE_d);
+        // [DllImport("phantom")]
+        // public static extern void get_ik(double[] EE_pos, double[] Theta_d, double[] Curr_angles);
+        // [DllImport("phantom")]
+        // public static extern void get_ee_d(double[] EE_d);
     }
 
 }

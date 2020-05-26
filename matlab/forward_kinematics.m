@@ -3,14 +3,14 @@
 % to the previous one, and outputs a 4x4 homogeneous transformation from 
 % the base frame to the EE frame 
 
-syms l1 l2 theta1 theta2 theta3
+syms l1 l2 q1 q2 q3
 
-alpha = [     0,   pi/2,             0, pi/2].';
-a     = [     0,      0,            l1,    0].';
-d     = [     0,      0,             0,   l2].';
-theta = [theta1, theta2, theta3-theta2,    0].';
+DH_table = [0 0 0 q1;
+            0 pi/2 0 q2;
+            l1 0 0 q3-q2;
+            0 pi/2 l2 0];
+[phantom_FK,T_array1] = dh2tf(DH_table);
 
-dh = [a alpha d theta];
+fk = phantom_FK(1:3,4)
 
-[phantom_T0N,~,~] = dh2tf(dh);
-phantom_T0N(1:3,4)
+generate_code(fk,'P')

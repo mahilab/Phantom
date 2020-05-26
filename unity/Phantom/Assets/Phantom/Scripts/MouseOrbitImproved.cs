@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
  
-[AddComponentMenu("Camera-Control/Mouse Orbit with zoom")]
+[AddComponentMenu("Camera-Control/Mouse Orbit")]
 public class MouseOrbitImproved : MonoBehaviour {
  
     public Transform target;
@@ -50,11 +50,11 @@ public class MouseOrbitImproved : MonoBehaviour {
 
     void Scroll() {
         distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel"), distanceMin, distanceMax);
-        RaycastHit hit;
-        if (Physics.Linecast (target.position, transform.position, out hit)) 
-        {
-            distance -=  hit.distance;
-        }
+        // RaycastHit hit;
+        // if (Physics.Linecast (target.position, transform.position, out hit)) 
+        // {
+        //     distance -=  hit.distance;
+        // }
         Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
         Vector3 position = rotation * negDistance + target.position;
 

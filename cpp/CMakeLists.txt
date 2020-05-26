@@ -9,10 +9,5 @@ FetchContent_MakeAvailable(mahi-com)
 FetchContent_Declare(mahi-gui GIT_REPOSITORY https://github.com/mahilab/mahi-gui.git) 
 FetchContent_MakeAvailable(mahi-gui)
 
-add_library(phantom SHARED dll.cpp)
+add_library(phantom SHARED src/dll.cpp src/PhantomModel.hpp src/PhantomModel.cpp)
 target_link_libraries(phantom mahi::robo mahi::com mahi::gui)
-
-add_executable(phantom_test main.cpp)
-target_link_libraries(phantom_test mahi::robo mahi::com)
-
-add_executable(auto_diff auto_diff.cpp)

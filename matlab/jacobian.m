@@ -1,9 +1,14 @@
 % This code computes the Jacobian of the phantom
 
-syms l1 l2 theta1 theta2 theta3
+syms l1 l2 q1 q2 q3
 
-fk = [cos(theta1)*(l1*cos(theta2) + l2*sin(theta3));
-      sin(theta1)*(l1*cos(theta2) + l2*sin(theta3));
-                    l1*sin(theta2) - l2*cos(theta3)];
+DH_table = [0 0 0 q1;
+            0 pi/2 0 q2;
+            l1 0 0 q3-q2;
+            0 pi/2 l2 0];
+[phantom_FK,T_array1] = dh2tf(DH_table);
+
+fk = phantom_FK(1:3,4);
                 
-phantom_jac = jacobian(fk,[theta1,theta2,theta3])
+phantom_jac = jacobian(fk,[q1,q2,q3])
+generate_code(phantom_jac,'J')

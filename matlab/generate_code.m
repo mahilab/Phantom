@@ -1,4 +1,4 @@
-function cpp = generate_code(x)
+function cpp = generate_code(x,var_str)
 
 cpp = ccode(x);
 
@@ -34,4 +34,14 @@ cpp = strrep(cpp,'m_c.','m_c');
 cpp = strrep(cpp,'m_be.','m_be');
 cpp = strrep(cpp,'m_df.','m_df');
 cpp = strrep(cpp,'m_g.','m_g');
+
+if (min(size(x)) == 1)
+cpp = strrep(cpp,'x[',[var_str '[']);
+cpp = strrep(cpp,'][0]',']');    
+else
+cpp = strrep(cpp,'x[',[var_str '(']);
+cpp = strrep(cpp,'][',',');
+cpp = strrep(cpp,']',')');
+end
+
 end
