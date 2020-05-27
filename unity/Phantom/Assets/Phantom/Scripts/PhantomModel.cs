@@ -8,6 +8,7 @@ public class PhantomModel : MonoBehaviour
     [Header("Options")]
     public bool showTransforms = false;
     public bool showWorkspace  = false;
+    public bool showHighlights = false;
 
     [Header("Joint Angles")]
     public float[] Q = new float[3];
@@ -22,7 +23,7 @@ public class PhantomModel : MonoBehaviour
     public Transform[] spools = new Transform[3];
 
     public GameObject workspace;
-    public TransformRenderer[] transformRenderers;
+
 
     public PhantomCableCapstan cableCapstan1;
     public PhantomCableCapstan cableCapstan2;
@@ -30,11 +31,18 @@ public class PhantomModel : MonoBehaviour
     public PhantomCableSpool cableSpool2;
     public PhantomCableSpool cableSpool3;
 
+    TransformRenderer[] transformRenderers;
+    HighlightGroup[] highlightGroups;
+
     Vector3 cableSpool1_init;
     Vector3 cableSpool2_init;
     Vector3 cableSpool3_init;
 
     void Awake() {
+
+        transformRenderers = GetComponentsInChildren<TransformRenderer>();
+        highlightGroups    = GetComponentsInChildren<HighlightGroup>();
+
         cableSpool1_init = cableSpool1.transform.localPosition;
         cableSpool2_init = cableSpool2.transform.localPosition;
         cableSpool3_init = cableSpool3.transform.localPosition;
@@ -46,6 +54,8 @@ public class PhantomModel : MonoBehaviour
         workspace.SetActive(showWorkspace);
         foreach (var tr in transformRenderers)
             tr.enabled = showTransforms; 
+        foreach (var hg in highlightGroups)
+            hg.show = showHighlights;
 
         UpdateAngles();
         UpdateCable1();
