@@ -4,6 +4,9 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
+#include <thread>
+#include <mutex>
+#include <atomic>
 
 namespace Phantom {
 
@@ -13,8 +16,13 @@ using mahi::util::DEG2RAD;
 using mahi::util::PI;
 using mahi::util::Timer;
 using mahi::util::Clock;
+using mahi::util::Frequency;
+using mahi::util::operator""_Hz;
 
 typedef std::lock_guard<std::mutex> Lock;
+
+template <typename T>
+using Ptr = std::shared_ptr<T>;
 
 /// Integrator
 template <typename T>

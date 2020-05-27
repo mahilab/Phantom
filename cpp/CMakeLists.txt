@@ -11,3 +11,8 @@ FetchContent_MakeAvailable(mahi-gui)
 
 add_library(phantom SHARED src/dll.cpp src/PhantomModel.hpp src/PhantomModel.cpp)
 target_link_libraries(phantom mahi::robo mahi::com mahi::gui)
+
+add_custom_command(TARGET phantom POST_BUILD 
+               COMMAND ${CMAKE_COMMAND} -E copy_if_different
+               $<TARGET_FILE:phantom>              
+               "${PROJECT_SOURCE_DIR}/../unity/Phantom/Assets/Phantom/Plugins/")

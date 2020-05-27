@@ -3,6 +3,10 @@
 
 namespace Phantom {
 
+//=============================================================================
+// INTERFACE
+//=============================================================================
+
 /// Base class for Phantom interfaces (simulations and hardware)
 class Interface {
 public:
@@ -17,7 +21,7 @@ public:
     /// Gets the Phantom joint angles [rad]
     virtual Vector3d get_positions() const = 0;
     /// Gets the Phantom joint velocities [rad/s]
-    virtual Vector3d get_velocities() const = 0;    
+    virtual Vector3d get_velocities() const = 0;     
 };
 
 } // namespace Phantom

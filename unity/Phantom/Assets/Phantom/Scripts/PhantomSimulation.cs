@@ -60,14 +60,14 @@ public class PhantomSimulation : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
             Restart();     
 
-        if (Input.GetKeyDown(KeyCode.T)) {
-            print(Dll.open_tuner());   
+        if (Input.GetKeyDown(KeyCode.F1)) {
+            Dll.open_tuner();   
         }
 
-        double[] q_double = {(double)model.Q[0]*Mathf.Deg2Rad,(double)model.Q[1]*Mathf.Deg2Rad,(double)model.Q[2]*Mathf.Deg2Rad};
+        // double[] q_double = {(double)model.Q[0]*Mathf.Deg2Rad,(double)model.Q[1]*Mathf.Deg2Rad,(double)model.Q[2]*Mathf.Deg2Rad};
 
-        Dll.get_fk(ee_pos);
-        ee_d_sphere.transform.localPosition = new Vector3((float)-ee_pos[1],(float)ee_pos[0],(float)-ee_pos[2]);
+        // Dll.get_fk(ee_pos);
+        // ee_d_sphere.transform.localPosition = new Vector3((float)-ee_pos[1],(float)ee_pos[0],(float)-ee_pos[2]);
 
         // Dll.get_ee_d(ee_d);
         // ee_d_sphere.transform.localPosition = new Vector3((float)-ee_d[1],(float)ee_d[0],(float)-ee_d[2]);
@@ -113,8 +113,8 @@ public class PhantomSimulation : MonoBehaviour
         public static extern void set_torques(double[] Tau);
         [DllImport("phantom")]
         public static extern bool open_tuner();
-        [DllImport("phantom")]
-        public static extern void get_fk(double[] EE_pos);
+        // [DllImport("phantom")]
+        // public static extern void get_fk(double[] EE_pos);
         // [DllImport("phantom")]
         // public static extern void get_ik(double[] EE_pos, double[] Theta_d, double[] Curr_angles);
         // [DllImport("phantom")]
