@@ -74,7 +74,7 @@ Vector3d inverse_kinematics(const Point& P, const Vector3d Q_ref) {
         return Vector3d::Zero();
 }
 
-Matrix3d jacobian(const Vector3d& Q) {
+Matrix3d J(const Vector3d& Q) {
     PHANTOM_TRIG
     Matrix3d J;
     // copy/paste from MATLAB jacobian.m
@@ -87,6 +87,10 @@ Matrix3d jacobian(const Vector3d& Q) {
     J(2, 1) = l1 * c2;
     J(2, 2) = l2 * s3;
     return J;
+}
+
+Vector3d forces_to_torques(const Vector3d& F, const Vector3d& Q) {
+    return J(Q).transpose() * F;
 }
 
 Matrix3d M(const Vector3d& Q) {

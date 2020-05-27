@@ -68,8 +68,15 @@ Point forward_kinematics(const Vector3d& Q);
 /// Returns the joint angles given a cartesian position in frame {0}
 Vector3d inverse_kinematics(const Point& P, const Vector3d Q_ref);
 
+//=============================================================================
+// JACOBIAN
+//=============================================================================
+
 /// Returns the Phantom Jacobian evaluated at the joint angles Q.
-Matrix3d jacobian(const Vector3d& Q);
+Matrix3d J(const Vector3d& Q);
+
+/// Computes torques required to generate forces at end effector: Tau = J(Q)' * F
+Vector3d forces_to_torques(const Vector3d& F, const Vector3d& Q);
 
 //=============================================================================
 // DYNAMICS

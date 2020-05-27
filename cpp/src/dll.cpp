@@ -19,8 +19,9 @@ std::atomic_bool g_stop_sim;
 
 bool cavusoglu  = false;
 bool control = false;
+bool jacobian = false;
 Vector3d q_d = Vector3d::Zero();
-std::vector<double> ee_d = {0.21,0,-0.17};
+std::vector<double> input = {0,0,0};
 std::vector<double> kps = { 10, 10, 10};
 std::vector<double> kds = {0.5,0.5,0.5};
 std::vector<double> torques = {0,0,0};
@@ -32,12 +33,16 @@ void simulation_thread() {
         {
             std::lock_guard<std::mutex> lock(g_mtx);
             if(control){
-                Point ee_point{ee_d[0],ee_d[1],ee_d[2]};
+                Point ee_point{input[0],input[1],input[2]};
                 Vector3d q_curr = {g_phantom.Q[0],g_phantom.Q[1],g_phantom.Q[2]};
                 q_d = Phantom::Model::inverse_kinematics(ee_point,q_curr);
                 for(size_t i = 0; i < 3; ++i){
                     g_phantom.Tau[i] = kps[i]*(q_d[i] - g_phantom.Q[i]) - kds[i]*g_phantom.Qd[i];
                 }
+            }
+            else if (jacobian) {
+                Vector3d F(&input[0]);
+                g_phantom.Tau = Phantom::Model::G(g_phantom.Q) + Phantom::Model::forces_to_torques(F, g_phantom.Q);
             } 
             if (cavusoglu)
                 Model::step_dynamics_cavusoglu(g_phantom, clk.restart().as_seconds());
@@ -89,8 +94,8 @@ EXPORT void get_fk(double* ee_pos) {
 //     std::copy(theta_d_.begin(),theta_d_.end(),theta_d);
 // }
 
-// EXPORT void get_ee_d(double* ee_d_) {
-//     std::copy(ee_d.begin(),ee_d.end(),ee_d_);
+// EXPORT void get_input(double* input_) {
+//     std::copy(input.begin(),input.end(),input_);
 // }
 
 class Tuner : public Application {
@@ -101,6 +106,8 @@ public:
         {
             std::lock_guard<std::mutex> lock(g_mtx);
             ImGui::Checkbox("Cavusoglu",&cavusoglu);
+            ImGui::Checkbox("Control",&control);
+            ImGui::Checkbox("Jacobian Test",&jacobian);
             // ImGui::DragDouble("K Hardstop", &g_phantom.Khard, 1, 0, 100);
             // ImGui::DragDouble("B Hardstop", &g_phantom.Bhard, 1, 0, 100);
             ImGui::DragDouble("Kp 1", &kps[0], 0.1, 0, 100);
@@ -109,10 +116,9 @@ public:
             ImGui::DragDouble("Kd 1", &kds[0], 0.01, 0, 10);
             ImGui::DragDouble("Kd 2", &kds[1], 0.01, 0, 10);
             ImGui::DragDouble("Kd 3", &kds[2], 0.01, 0, 10);
-            ImGui::DragDouble("EE desired x", &ee_d[0], 0.001, -1, 1);
-            ImGui::DragDouble("EE desired y", &ee_d[1], 0.001, -1, 1);
-            ImGui::DragDouble("EE desired z", &ee_d[2], 0.001, -1, 1);
-            ImGui::Checkbox("Control",&control);
+            ImGui::DragDouble("X", &input[0], 0.001, -1, 1);
+            ImGui::DragDouble("Y", &input[1], 0.001, -1, 1);
+            ImGui::DragDouble("Z", &input[2], 0.001, -1, 1);
         }
         ImGui::End();
         if (!keep_open)

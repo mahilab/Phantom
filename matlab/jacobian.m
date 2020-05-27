@@ -12,3 +12,4 @@ fk = phantom_FK(1:3,4);
                 
 phantom_jac = jacobian(fk,[q1,q2,q3])
 generate_code(phantom_jac,'J')
+generate_code(phantom_jac.','J_transpose')
