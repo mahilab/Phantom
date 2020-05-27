@@ -1,12 +1,20 @@
 #pragma once
 #include <Eigen/Dense>
 #include <Mahi/Util.hpp>
+#include <thread>
+#include <mutex>
+#include <atomic>
 
 namespace Phantom {
 
 using Eigen::Matrix3d;
 using Eigen::Vector3d;
 using mahi::util::DEG2RAD;
+using mahi::util::PI;
+using mahi::util::Timer;
+using mahi::util::Clock;
+
+typedef std::lock_guard<std::mutex> Lock;
 
 /// Integrator
 template <typename T>

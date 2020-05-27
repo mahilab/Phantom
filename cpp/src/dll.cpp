@@ -1,4 +1,4 @@
-#include "PhantomModel.hpp"
+#include "PhantomSimulation.hpp"
 #include <Mahi/Util.hpp>
 #include <Mahi/Gui.hpp>
 #include <thread>
