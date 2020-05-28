@@ -46,7 +46,7 @@ Vector3d forward_kinematics(const Vector3d &Q) {
     return P;
 }
 
-Vector3d inverse_kinematics(const Vector3d& P, const Vector3d Q_ref) {
+Vector3d inverse_kinematics(const Vector3d& P, const Vector3d Q_prev) {
     double l_star = std::sqrt(P.x() * P.x() + P.y() * P.y());
     double ee_theta = std::atan2(P.z(), l_star);
     double lh = std::sqrt(P.z() * P.z() + l_star * l_star);
@@ -63,15 +63,15 @@ Vector3d inverse_kinematics(const Vector3d& P, const Vector3d Q_ref) {
     bool a_valid = validate_angles(Q_a);
     bool b_valid = validate_angles(Q_b);
 
-    double a_err = (Q_ref - Q_a).squaredNorm();
-    double b_err = (Q_ref - Q_b).squaredNorm();
+    double a_err = (Q_prev - Q_a).squaredNorm();
+    double b_err = (Q_prev - Q_b).squaredNorm();
 
     if ((a_err < b_err) && a_valid) 
         return Q_a;
     else if (b_valid) 
         return Q_b;
     else 
-        return Vector3d::Zero();
+        return Q_prev;
 }
 
 Matrix3d J(const Vector3d& Q) {

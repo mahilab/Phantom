@@ -48,6 +48,15 @@ public class PhantomModel : MonoBehaviour
         cableSpool3_init = cableSpool3.transform.localPosition;
     }
 
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.W))
+            showWorkspace = !showWorkspace;
+        if (Input.GetKeyDown(KeyCode.H))
+            showHighlights = !showHighlights;
+        if (Input.GetKeyDown(KeyCode.T))
+            showTransforms = !showTransforms;
+    }
+
     // Update is called once per frame
     void LateUpdate()
     {

@@ -37,13 +37,15 @@ struct TaskSpaceForce : public ControlLaw {
 };
 
 struct TaskSpacePD : public ControlLaw {
-    TaskSpacePD() { gcomp = true; Kp.fill(10); Kd.fill(0.5f); P_ref.fill(0); }
+    TaskSpacePD() { gcomp = true; Kp.fill(100); Kd.fill(5); P_ref.fill(0); }
     virtual Vector3d control(Vector3d Q, Vector3d Qd, double dt) {
         Vector3d G = gcomp ? Model::G(Q) : Vector3d::Zero();
-        auto P = Model::forward_kinematics(Q);
-        auto V = Model::J(Q) * Qd;
-        auto F = Kp.cwiseProduct(P_ref - P) - Kd.cwiseProduct(V);               
-        return G + Model::forces_to_torques(F,Q);
+        Matrix3d Kp_diag = Kp.asDiagonal();
+        Matrix3d Kd_diag = Kd.asDiagonal();
+        Matrix3d Kpq = Model::J(Q).transpose() * Kp_diag * Model::J(Q);
+        Matrix3d Kdq = Model::J(Q).transpose() * Kd_diag * Model::J(Q);
+        Vector3d Q_ref = Model::inverse_kinematics(P_ref, Q);
+        return G + Kpq * (Q_ref - Q) - Kdq * (Qd);       
     }
     bool gcomp;
     Vector3d Kp;

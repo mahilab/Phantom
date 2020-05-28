@@ -66,7 +66,7 @@ bool validate_angles(const Vector3d& Q);
 Vector3d forward_kinematics(const Vector3d& Q);
 
 /// Returns the joint angles given a cartesian position in frame {0}
-Vector3d inverse_kinematics(const Vector3d& P, const Vector3d Q_ref);
+Vector3d inverse_kinematics(const Vector3d& P, const Vector3d Q_prev);
 
 //=============================================================================
 // JACOBIAN

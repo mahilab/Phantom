@@ -17,9 +17,17 @@ public class Phantom
         return P;
     }
 
+    // ux = -sy
+    // uy = sx
+    // uz = -sz
+
     /// Transforms point in Phantom {0} to Unity {0}
     public static Vector3 ToUnity(Vector3 p) {
         return new Vector3(-p.y, p.x, -p.z);
+    }
+
+    public static Vector3 FromUnity(Vector3 p) {
+        return new Vector3(p.y, -p.x, -p.z);
     }
 }
 
