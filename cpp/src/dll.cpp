@@ -73,6 +73,7 @@ public:
             ImGui::Separator();
             auto Q = g_sim.get_positions();
             auto P = Model::forward_kinematics(Q);
+            auto T = g_sim.get_torques();
             auto lock = g_sim.get_lock();
             if (mode == JST) {
                 ImGui::DragDouble3("Torque [Nm]", jst->Tau.data(), 0.001f, -1, 1);               
@@ -110,6 +111,7 @@ public:
             ImGui::Separator();
             ImGui::Text("Q: %.2f, %.2f, %.2f", Q[0], Q[1], Q[2]);
             ImGui::Text("P: %.2f, %.2f, %.2f", P[0], P[1], P[2]);
+            ImGui::Text("T: %.2f, %.2f, %.2f", T[0], T[1], T[2]);
 
         }
         ImGui::End();

@@ -101,6 +101,11 @@ public:
         Lock lock(m_mtx);
         return m_interface->get_velocities();
     }  
+    /// Gets the Phantom joint velocities [rad/s]
+    virtual Vector3d get_torques() const {
+        Lock lock(m_mtx);
+        return m_interface->get_torques();
+    }  
     /// Acquire controller thread mutex 
     inline Lock get_lock() {
         return Lock(m_mtx);
