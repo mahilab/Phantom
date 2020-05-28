@@ -39,6 +39,11 @@ public:
         Lock lock(m_mtx);
         return m_state.Qd;
     }
+    /// Gets the Phantom joint Torques [Nm]
+    virtual Vector3d get_torques() override {
+        Lock lock(m_mtx);
+        return m_state.Tau;
+    }
 private:
     /// Simulation thread implementation
     virtual void thread_func() {

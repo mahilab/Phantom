@@ -57,6 +57,13 @@ public:
             Qd[i] = m_q8.velocity.velocities[i] / Model::Eta[i];
         return Qd;
     }
+    /// Gets the Phantom joint Torques [rad/s]
+    virtual Vector3d get_torques() {
+        Vector3d Tau;   
+        for (int i = 0; i < 3; ++i) 
+            Tau[i] = m_q8.AO[i];
+        return Tau;
+    }
 private:
     Q8Usb m_q8;
     static constexpr double m_command_gain  = 10.0 / 1.5f; // [V/A]
