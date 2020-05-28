@@ -16,6 +16,14 @@ struct ControlLaw {
     virtual Vector3d control(Vector3d Q, Vector3d , double dt) = 0;
 };
 
+struct JointSpaceTorque : public ControlLaw {
+    JointSpaceTorque() { Tau.fill(0); }
+    virtual Vector3d control(Vector3d Q, Vector3d Qd, double dt) override {
+        return Tau;
+    }
+    Vector3d Tau;
+};
+
 struct JointSpacePD : public ControlLaw {
     JointSpacePD() { Kp.fill(10); Kd.fill(0.5f); Q_ref.fill(0); }
     virtual Vector3d control(Vector3d Q, Vector3d Qd, double dt) override {

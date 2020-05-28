@@ -189,9 +189,9 @@ void step_dynamics(State& s, double dt) {
     // external disturbances and collision torques
     Vector3d Tau_prime = collision_torques(s.Q, s.Qd);
     // reflected motor inertia
-    static Matrix3d M_prime((Matrix3d() << Jm * Eta[0] * Eta[0], 0, 0,
-                                           0, Jm * Eta[1] * Eta[1], 0,
-                                           0, 0, Jm * Eta[2] * Eta[2] ).finished());
+    static Matrix3d M_prime((Matrix3d() << J_mot * Eta[0] * Eta[0], 0, 0,
+                                           0, J_mot * Eta[1] * Eta[1], 0,
+                                           0, 0, J_mot * Eta[2] * Eta[2] ).finished());
     // joint damping
     Vector3d B;
     B[0] = B_coef[0]*s.Qd[0];

@@ -37,14 +37,16 @@ EXPORT void set_target(double x, double y, double z) {
 class Debugger : public Application {
 public:
 
-    enum Mode { None = 0, JSPD, TSF, TSPD };
+    enum Mode { None = 0, JST, JSPD, TSF, TSPD };
 
     bool keep_open = true;
+    Ptr<JointSpaceTorque> jst;
     Ptr<JointSpacePD> jspd;
     Ptr<TaskSpaceForce> tsf;
     Ptr<TaskSpacePD> tspd;
 
     Debugger() : Application() { 
+        jst  = std::make_shared<JointSpaceTorque>();
         jspd = std::make_shared<JointSpacePD>();
         tsf  = std::make_shared<TaskSpaceForce>();
         tspd = std::make_shared<TaskSpacePD>();
@@ -56,9 +58,11 @@ public:
             Lock unity_lock(g_unity_mtx);
             static int mode = 0;
             static bool track_target = false;
-            if (ImGui::ModeSelector(&mode, {"None","JS-PD","TS-F","TS-PD"})) {
+            if (ImGui::ModeSelector(&mode, {"None", "JS-T", "JS-PD","TS-F","TS-PD"})) {
                 if (mode == None)
                     g_sim.set_law(nullptr);
+                if (mode == JST)
+                    g_sim.set_law(jst);
                 else if (mode == JSPD) 
                     g_sim.set_law(jspd);                
                 else if (mode == TSF)
@@ -70,6 +74,9 @@ public:
             auto Q = g_sim.get_positions();
             auto P = Model::forward_kinematics(Q);
             auto lock = g_sim.get_lock();
+            if (mode == JST) {
+                ImGui::DragDouble3("Torque [Nm]", jst->Tau.data(), 0.001f, -1, 1);               
+            }
             if (mode == JSPD) {
                 static bool ik = false;
                 ImGui::Checkbox("IK", &ik);

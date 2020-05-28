@@ -30,12 +30,12 @@ public:
         m_state.Tau = Tau;
     }
     /// Gets the Phantom joint angles [rad]
-    virtual Vector3d get_positions() const override {
+    virtual Vector3d get_positions() override {
         Lock lock(m_mtx);
         return m_state.Q;
     }
     /// Gets the Phantom joint velocities [rad/s]
-    virtual Vector3d get_velocities() const override {
+    virtual Vector3d get_velocities() override {
         Lock lock(m_mtx);
         return m_state.Qd;
     }

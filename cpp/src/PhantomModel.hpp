@@ -49,8 +49,23 @@ constexpr double Fk_coef[3] = {0.01, 0.01, 0.01};
 /// Transmission Ratios [unitless]
 constexpr double Eta[3] = {13.3, 11.2, 11.2};
 
+/// Motor Nominal Torque [Nm]
+constexpr double Tau_mot_nom = 0.0286;
+
+/// Motor Max Torque [Nm]
+constexpr double Tau_mot_max = 0.129;
+
+/// Joint Max Torque [Nm]
+constexpr double Tau_nom[3] = {Tau_mot_nom * Eta[0], Tau_mot_nom * Eta[1], Tau_mot_nom * Eta[2]};
+
+/// Joint Max Torque [Nm]
+constexpr double Tau_max[3] = {Tau_mot_max * Eta[0], Tau_mot_max * Eta[1], Tau_mot_max * Eta[2]};
+
 /// Motor Rotor Inertia [kg-m^2]
-constexpr double Jm = 1.08e-06;
+constexpr double J_mot = 1.08e-06;
+
+/// Motor Torque Constant [Nm/A]
+constexpr double Kt = 0.0234;
 
 /// Gravity
 constexpr double g = 9.80665;
