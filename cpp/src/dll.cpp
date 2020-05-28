@@ -20,41 +20,85 @@ EXPORT void stop() {
     g_sim.stop();
 }
 
-EXPORT void set_torques(double* Tau) {
-
-}
-
 EXPORT void get_positions(double* Q) {
     auto Q_sim = g_sim.get_positions();
     std::copy(Q_sim.begin(), Q_sim.end(), Q);
 }
 
-class Tuner : public Application {
+class Debugger : public Application {
 public:
-    Tuner() : Application() { }
+
+    enum Mode { None = 0, JSPD, TSF, TSPD };
+
+    bool keep_open = true;
+    Ptr<JointSpacePD> jspd;
+    Ptr<TaskSpaceForce> tsf;
+    Ptr<TaskSpacePD> tspd;
+
+    Debugger() : Application() { 
+        jspd = std::make_shared<JointSpacePD>();
+        tsf  = std::make_shared<TaskSpaceForce>();
+        tspd = std::make_shared<TaskSpacePD>();
+    }
+
     void update() override {
         ImGui::Begin("Test",&keep_open);
         {
-            // auto lock = g_sim.get_lock();
+            static int mode = 0;
+            if (ImGui::ModeSelector(&mode, {"None","JS-PD","TS-F","TS-PD"})) {
+                if (mode == None)
+                    g_sim.set_law(nullptr);
+                else if (mode == JSPD) 
+                    g_sim.set_law(jspd);                
+                else if (mode == TSF)
+                    g_sim.set_law(tsf);
+                else if (mode = TSPD)
+                    g_sim.set_law(tspd);
+            }
+            ImGui::Separator();
+            auto Q = g_sim.get_positions();
+            auto lock = g_sim.get_lock();
+            if (mode == JSPD) {
+                static bool ik = false;
+                ImGui::Checkbox("IK", &ik);
+                if (ik) {
+                    static Vector3d EE;
+                    ImGui::DragDouble3("Position [m]", EE.data(), 0.001f, -1, 1);
+                    jspd->Q_ref = Model::inverse_kinematics(EE, jspd->Q_ref);
+                }
+                else
+                    ImGui::DragDouble3("Theta [rad]", jspd->Q_ref.data(), 0.001f, -1, 1);                
+            }
+            else if (mode == TSF) {
+                ImGui::Checkbox("G Comp", &tsf->gcomp);
+                ImGui::DragDouble3("Forece [N]", tsf->F.data(), 0.001f, -1, 1);
+            }
+            else if (mode = TSPD) {
+                ImGui::Checkbox("G Comp", &tspd->gcomp);
+                ImGui::DragDouble3("Position [m]", tspd->P_ref.data(), 0.001f, -1, 1);
+                ImGui::DragDouble3("Kp [N/m]", tspd->Kp.data(), 0.001f, 0, 100);
+                ImGui::DragDouble3("Kd [Ns/m", tspd->Kd.data(), 0.001f, 0, 10);
+            }
+            ImGui::Separator();
+            ImGui::Text("%.2f, %.2f, %.2f", Q[0], Q[1], Q[2]);
         }
         ImGui::End();
         if (!keep_open)
             quit();
     }
-    bool keep_open = true;
 };
 
-std::unique_ptr<Tuner> g_tuner = nullptr;
+std::unique_ptr<Debugger> g_debugger = nullptr;
 
 void tuner_thread() {
-    g_tuner = std::make_unique<Tuner>();
-    g_tuner->run();
-    g_tuner = nullptr;
+    g_debugger = std::make_unique<Debugger>();
+    g_debugger->run();
+    g_debugger = nullptr;
 }
 
 EXPORT bool open_tuner() 
 {
-    if (g_tuner == nullptr) {
+    if (g_debugger == nullptr) {
         auto thrd = std::thread(tuner_thread);
         thrd.detach();
         return true;

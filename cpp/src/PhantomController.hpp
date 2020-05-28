@@ -17,6 +17,7 @@ struct ControlLaw {
 };
 
 struct JointSpacePD : public ControlLaw {
+    JointSpacePD() { Kp.fill(10); Kd.fill(0.5f); Q_ref.fill(0); }
     virtual Vector3d control(Vector3d Q, Vector3d Qd, double dt) override {
         return Kp.cwiseProduct(Q_ref - Q) - Kd.cwiseProduct(Qd);               
     }
@@ -25,8 +26,29 @@ struct JointSpacePD : public ControlLaw {
     Vector3d Q_ref;    
 };
 
-struct TaskSpacePD : public ControlLaw {
+struct TaskSpaceForce : public ControlLaw {
+    TaskSpaceForce() { gcomp = true; F.fill(0); }
+    virtual Vector3d control(Vector3d Q, Vector3d Qd, double dt) {
+        Vector3d G = gcomp ? Model::G(Q) : Vector3d::Zero();
+        return G + Model::forces_to_torques(F,Q);
+    }
+    bool gcomp;
+    Vector3d F;
+};
 
+struct TaskSpacePD : public ControlLaw {
+    TaskSpacePD() { gcomp = true; Kp.fill(10); Kd.fill(0.5f); P_ref.fill(0); }
+    virtual Vector3d control(Vector3d Q, Vector3d Qd, double dt) {
+        Vector3d G = gcomp ? Model::G(Q) : Vector3d::Zero();
+        auto P = Model::forward_kinematics(Q);
+        auto V = Model::J(Q) * Qd;
+        auto F = Kp.cwiseProduct(P_ref - P) - Kd.cwiseProduct(V);               
+        return G + Model::forces_to_torques(F,Q);
+    }
+    bool gcomp;
+    Vector3d Kp;
+    Vector3d Kd;
+    Vector3d P_ref;
 };
 
 //=============================================================================

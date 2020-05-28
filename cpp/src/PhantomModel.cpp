@@ -36,27 +36,27 @@ bool validate_angles(const Vector3d &Q) {
     return true;
 }
 
-Point forward_kinematics(const Vector3d &Q) {
+Vector3d forward_kinematics(const Vector3d &Q) {
     PHANTOM_TRIG
-    Point P;
+    Vector3d P;
     // copy/paste from MATLAB jacobian.m
-    P.x = c1 * (l1 * c2 + l2 * s3);
-    P.y = s1 * (l1 * c2 + l2 * s3);
-    P.z = l1 * s2 - l2 * c3;
+    P.x() = c1 * (l1 * c2 + l2 * s3);
+    P.y() = s1 * (l1 * c2 + l2 * s3);
+    P.z() = l1 * s2 - l2 * c3;
     return P;
 }
 
-Vector3d inverse_kinematics(const Point& P, const Vector3d Q_ref) {
-    double l_star = std::sqrt(P.x * P.x + P.y * P.y);
-    double ee_theta = std::atan2(P.z, l_star);
-    double lh = std::sqrt(P.z * P.z + l_star * l_star);
+Vector3d inverse_kinematics(const Vector3d& P, const Vector3d Q_ref) {
+    double l_star = std::sqrt(P.x() * P.x() + P.y() * P.y());
+    double ee_theta = std::atan2(P.z(), l_star);
+    double lh = std::sqrt(P.z() * P.z() + l_star * l_star);
     Vector3d Q_a, Q_b;
 
-    Q_a[0] = std::atan2(P.y, P.x);
+    Q_a[0] = std::atan2(P.y(), P.x());
     Q_a[1] = std::acos((l2 * l2 - l1 * l1 - lh * lh) / (-2 * l1 * lh)) + ee_theta;
     Q_a[2] = std::acos((lh * lh - l1 * l1 - l2 * l2) / (-2 * l1 * l2)) + Q_a[1] - mahi::util::PI / 2;
 
-    Q_b[0] = mahi::util::wrap_to_pi(atan2(P.y, P.x) - mahi::util::PI);
+    Q_b[0] = mahi::util::wrap_to_pi(atan2(P.y(), P.x()) - mahi::util::PI);
     Q_b[1] = mahi::util::PI - ee_theta + std::acos((l2 * l2 - l1 * l1 - lh * lh) / (-2 * l1 * lh));
     Q_b[2] = std::acos((lh * lh - l1 * l1 - l2 * l2) / (-2 * l1 * l2)) + Q_b[1] - mahi::util::PI / 2;
 

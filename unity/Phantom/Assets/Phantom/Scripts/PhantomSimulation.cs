@@ -30,38 +30,42 @@ public class PhantomSimulation : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Dll.start();
+        PhantomPlugin.start();
     }
 
-    void OnApplicationQuit() {
-        Dll.stop();
+    void OnApplicationQuit()
+    {
+        PhantomPlugin.stop();
     }
 
-    void Update() {
+    void Update()
+    {
 
-        if (Time.time > nextTime) {
+        if (Time.time > nextTime)
+        {
             fps = frames / deltaTime;
             nextTime += deltaTime;
             frames = 0;
         }
         frames++;
 
-        tau[0] = 0.05*Input.GetAxis("Horizontal");
-        tau[1] = 0.1*Input.GetAxis("Vertical");
-        tau[2] = 0.1*Input.GetAxis("Vertical2");
+        tau[0] = 0.05 * Input.GetAxis("Horizontal");
+        tau[1] = 0.1 * Input.GetAxis("Vertical");
+        tau[2] = 0.1 * Input.GetAxis("Vertical2");
 
-        Dll.get_positions(radians);
+        PhantomPlugin.get_positions(radians);
 
         for (int i = 0; i < 3; ++i)
             model.Q[i] = Mathf.Rad2Deg * (float)radians[i];
-        
-        Dll.set_torques(tau);
+
+        // PhantomPlugin.set_torques(tau);
 
         if (Input.GetKeyDown(KeyCode.R))
-            Restart();     
+            Restart();
 
-        if (Input.GetKeyDown(KeyCode.F1)) {
-            Dll.open_tuner();   
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            PhantomPlugin.open_tuner();   
         }
 
         // double[] q_double = {(double)model.Q[0]*Mathf.Deg2Rad,(double)model.Q[1]*Mathf.Deg2Rad,(double)model.Q[2]*Mathf.Deg2Rad};
@@ -80,29 +84,30 @@ public class PhantomSimulation : MonoBehaviour
         // else{
         //     ee_d_sphere.GetComponent<Renderer>().material.SetColor("_Color", Color.green);
         // } 
-        
+
         // Dll.get_ik(ee_pos,theta_d,q_double);
         // theta_d[0] = theta_d[0]*Mathf.Rad2Deg;
         // theta_d[1] = theta_d[1]*Mathf.Rad2Deg;
         // theta_d[2] = theta_d[2]*Mathf.Rad2Deg;
     }
 
-    bool arrays_eq(double[] arr1, double[] arr2, int size, double thresh){
+    bool arrays_eq(double[] arr1, double[] arr2, int size, double thresh)
+    {
         float diff = 0;
         for (int i = 0; i < size; i++)
         {
-            diff += Mathf.Sqrt((float)((arr1[i] - arr2[i])*(arr1[i] - arr2[i])));
+            diff += Mathf.Sqrt((float)((arr1[i] - arr2[i]) * (arr1[i] - arr2[i])));
         }
         return diff < thresh;
     }
 
-    void Restart() {
-        Dll.stop();
-        Dll.start();
+    void Restart()
+    {
+        // PhantomPlugin.stop();
+        // PhantomPlugin.start();
     }
 
-    /// Dll Imports
-    public class Dll {
+    public static class PhantomPlugin {
         [DllImport("phantom")] 
         public static extern void start();
         [DllImport("phantom")] 
@@ -113,12 +118,6 @@ public class PhantomSimulation : MonoBehaviour
         public static extern void set_torques(double[] Tau);
         [DllImport("phantom")]
         public static extern bool open_tuner();
-        // [DllImport("phantom")]
-        // public static extern void get_fk(double[] EE_pos);
-        // [DllImport("phantom")]
-        // public static extern void get_ik(double[] EE_pos, double[] Theta_d, double[] Curr_angles);
-        // [DllImport("phantom")]
-        // public static extern void get_ee_d(double[] EE_d);
     }
 
 }

@@ -63,10 +63,10 @@ constexpr double g = 9.80665;
 bool validate_angles(const Vector3d& Q);
 
 /// Returns a cartesian position in frame {0} given a set of valid joint angles.
-Point forward_kinematics(const Vector3d& Q);
+Vector3d forward_kinematics(const Vector3d& Q);
 
 /// Returns the joint angles given a cartesian position in frame {0}
-Vector3d inverse_kinematics(const Point& P, const Vector3d Q_ref);
+Vector3d inverse_kinematics(const Vector3d& P, const Vector3d Q_ref);
 
 //=============================================================================
 // JACOBIAN
