@@ -72,6 +72,9 @@ public:
                       Frequency rate = 1000_Hz) 
         : m_interface(std::move(interface)), m_law(std::move(law)), m_rate(rate), m_running(false)
     { }
+    ~Controller() {
+        stop();
+    }
     /// Start the controller
     void start() {
         if (!m_running) {

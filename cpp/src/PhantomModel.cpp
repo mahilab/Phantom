@@ -282,5 +282,15 @@ void step_dynamics_cavusoglu(State& s, double dt) {
     integrate_state(s, Qdd, dt);
 }
 
+void clamp_torques_max(Vector3d& Tau) {
+    for (int i = 0; i < 3; ++i)
+        Tau[i] = mahi::util::clamp(Tau[i], -Tau_max[i], Tau_max[i]);
+}
+
+void clamp_torques_nom(Vector3d& Tau) {
+    for (int i = 0; i < 3; ++i)
+        Tau[i] = mahi::util::clamp(Tau[i], -Tau_nom[i], Tau_nom[i]);
+}
+
 }
 }

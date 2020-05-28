@@ -127,5 +127,15 @@ void step_dynamics(State& s, double dt);
 /// Steps Phantom dynamics forward in time according to Cavusoglu et al. 2001
 void step_dynamics_cavusoglu(State& s, double dt);
 
+//=============================================================================
+// MISC
+//=============================================================================
+
+/// Clamps joint torques to their max value
+void clamp_torques_max(Vector3d& Tau);
+
+/// Clamps joint torques to their nominal value
+void clamp_torques_nom(Vector3d& Tau);
+
 } // namespace Model
 } // namespace Phantom

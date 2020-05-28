@@ -10,7 +10,9 @@ class Hardware : public Interface {
 public:
 
     Hardware() : m_q8(false) { }
-    ~Hardware() { stop(); }
+    ~Hardware() { 
+        stop(); 
+    }
     /// Starts running the Phantom
     virtual void start() {
         QuanserOptions opts;
@@ -19,7 +21,8 @@ public:
             opts.encX_dir[i] = QuanserOptions::EncoderDirection::Reversed;
             m_q8.encoder.modes.write(i, QuadMode::X4);
             m_q8.encoder.units.set(i, 2 * PI / 1024);
-            
+            m_q8.DO.enable_values[i] = TTL_HIGH;   
+            m_q8.DO.disable_values[i] = TTL_LOW;         
         }    
         m_q8.set_options(opts);   
         m_q8.enable();
@@ -32,9 +35,10 @@ public:
     }
     /// Sets the Phantom joint torques [Nm]
     virtual void set_torques(const Vector3d& Tau) {
-        m_q8.AO[0] = 0;
-        m_q8.AO[1] = 0;
-        m_q8.AO[2] = 0;
+        Vector3d Tau_clamp = Tau;
+        Model::clamp_torques_nom(Tau_clamp);
+        for (int i = 0; i < 3; ++i)
+            m_q8.AO[i] = ((Tau_clamp[i] / Model::Eta[i]) / Model::Kt) * m_command_gain * m_directions[i];
         m_q8.AO.write();
     }
     /// Gets the Phantom joint angles [rad]
@@ -55,7 +59,8 @@ public:
     }
 private:
     Q8Usb m_q8;
-    static constexpr double m_command_gain = 10.0 / 1.5f; // [V/A]
+    static constexpr double m_command_gain  = 10.0 / 1.5f; // [V/A]
+    static constexpr double m_directions[3] = {1,-1,-1};
 };
 
 }
