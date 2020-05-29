@@ -23,7 +23,7 @@ public:
     /// Gets the Phantom joint velocities [rad/s]
     virtual Vector3d get_velocities() = 0;    
     /// Gets the Phantom joint Torques [Nm]
-    virtual Vector3d get_torques() = 0;     
+    virtual Vector3d get_torques() = 0;  
 };
 
 } // namespace Phantom

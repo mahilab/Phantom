@@ -17,6 +17,8 @@ public class PhantomSimulation : MonoBehaviour
     private int frames;
     public float fps;
 
+    GameObject[] targets;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -45,7 +47,7 @@ public class PhantomSimulation : MonoBehaviour
 
         PhantomPlugin.get_positions(radians);
 
-        Vector3 target_pos = Phantom.FromUnity(target.transform.localPosition);
+        Vector3 target_pos = PhantomModel.FromUnity(target.transform.localPosition);
         PhantomPlugin.set_target(target_pos.x, target_pos.y, target_pos.z);
 
         for (int i = 0; i < 3; ++i)
@@ -55,20 +57,10 @@ public class PhantomSimulation : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
             Restart();
 
-        if (Input.GetKeyDown(KeyCode.F1))
+        if (Input.GetKeyDown(KeyCode.G))
         {
             PhantomPlugin.open_tuner();   
         }
-    }
-
-    bool arrays_eq(double[] arr1, double[] arr2, int size, double thresh)
-    {
-        float diff = 0;
-        for (int i = 0; i < size; i++)
-        {
-            diff += Mathf.Sqrt((float)((arr1[i] - arr2[i]) * (arr1[i] - arr2[i])));
-        }
-        return diff < thresh;
     }
 
     void Restart()

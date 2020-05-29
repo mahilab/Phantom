@@ -113,6 +113,10 @@ public:
     inline Lock get_lock() {
         return Lock(m_mtx);
     }
+    /// Return true if the Controller is running
+    bool running() {
+        return m_running;
+    }
 private:
     void thread_func() {
         m_interface->start();

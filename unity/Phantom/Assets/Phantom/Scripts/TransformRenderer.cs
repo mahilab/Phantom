@@ -27,13 +27,13 @@ public class TransformRenderer : MonoBehaviour
     public Color zColor1 = new Color(0,0,1,0);
     public Color zColor2 = Color.blue;
 
+    public Material axisMaterial;
 
     GameObject root;
     LineRenderer xAxis;
     LineRenderer yAxis;
     LineRenderer zAxis;
 
-    Material axisMaterial;
 
     // Start is called before the first frame update
     void Awake()
@@ -54,9 +54,7 @@ public class TransformRenderer : MonoBehaviour
     }
 
     void CreateMaterial() {
-        axisMaterial = new Material(Shader.Find("Custom/Highlight"));
-        axisMaterial.SetFloat("_Darken", 1.0f);
-        axisMaterial.SetFloat("_SeeThru", 1.0f);
+
     }
 
     void CreateRoot() {
@@ -98,7 +96,6 @@ public class TransformRenderer : MonoBehaviour
     }
 
     void OnDestroy() {
-        Destroy(axisMaterial);
         Destroy(root);
     }
 }

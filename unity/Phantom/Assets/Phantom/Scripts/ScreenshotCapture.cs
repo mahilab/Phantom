@@ -73,7 +73,7 @@ using System.Linq;
      {
          // check keyboard 'k' for one time screenshot capture and holding down 'v' for continious screenshots
          captureScreenshot |= Input.GetKeyDown("k");
-         captureVideo = Input.GetKey("v");
+        //  captureVideo = Input.GetKey("v");
  
          if (captureScreenshot || captureVideo)
          {

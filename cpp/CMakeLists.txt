@@ -12,7 +12,7 @@ FetchContent_Declare(mahi-daq GIT_REPOSITORY https://github.com/mahilab/mahi-daq
 FetchContent_MakeAvailable(mahi-daq)
 
 add_library(phantom SHARED src/dll.cpp src/PhantomModel.hpp src/PhantomModel.cpp)
-target_link_libraries(phantom mahi::robo mahi::com mahi::gui)
+target_link_libraries(phantom mahi::robo mahi::com mahi::gui mahi::daq)
 add_custom_command(TARGET phantom POST_BUILD 
                COMMAND ${CMAKE_COMMAND} -E copy_if_different
                $<TARGET_FILE:phantom>              

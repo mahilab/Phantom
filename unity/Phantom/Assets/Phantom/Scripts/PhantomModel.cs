@@ -7,7 +7,6 @@ public class PhantomModel : MonoBehaviour
 
     [Header("Options")]
     public bool showTransforms = false;
-    public bool showWorkspace  = false;
     public bool showHighlights = false;
 
     [Header("Joint Angles")]
@@ -22,9 +21,6 @@ public class PhantomModel : MonoBehaviour
     public Transform frame3p;
     public Transform[] spools = new Transform[3];
 
-    public GameObject workspace;
-
-
     public PhantomCableCapstan cableCapstan1;
     public PhantomCableCapstan cableCapstan2;
     public PhantomCableSpool cableSpool1;
@@ -38,6 +34,27 @@ public class PhantomModel : MonoBehaviour
     Vector3 cableSpool2_init;
     Vector3 cableSpool3_init;
 
+    const float l1 = 0.209550f;
+    const float l2 = 0.169545f;
+    const float l3 = 0.031750f;
+
+    public static Vector3 ForwardKinematics(float q1, float q2, float q3) {
+        Vector3 P = new Vector3();
+        P.x = Mathf.Cos(q1*Mathf.Deg2Rad)*(l1*Mathf.Cos(q2*Mathf.Deg2Rad) + l2*Mathf.Sin(q3*Mathf.Deg2Rad));
+        P.y = Mathf.Sin(q1*Mathf.Deg2Rad)*(l1*Mathf.Cos(q2*Mathf.Deg2Rad) + l2*Mathf.Sin(q3*Mathf.Deg2Rad));
+        P.z = l1*Mathf.Sin(q2*Mathf.Deg2Rad) - l2*Mathf.Cos(q3*Mathf.Deg2Rad);
+        return P;
+    }
+
+    /// Transforms point in Phantom {0} to Unity {0}
+    public static Vector3 ToUnity(Vector3 p) {
+        return new Vector3(-p.y, p.x, -p.z);
+    }
+
+    public static Vector3 FromUnity(Vector3 p) {
+        return new Vector3(p.y, -p.x, -p.z);
+    }
+
     void Awake() {
 
         transformRenderers = GetComponentsInChildren<TransformRenderer>();
@@ -49,8 +66,6 @@ public class PhantomModel : MonoBehaviour
     }
 
     void Update() {
-        if (Input.GetKeyDown(KeyCode.W))
-            showWorkspace = !showWorkspace;
         if (Input.GetKeyDown(KeyCode.H))
             showHighlights = !showHighlights;
         if (Input.GetKeyDown(KeyCode.T))
@@ -60,7 +75,6 @@ public class PhantomModel : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-        workspace.SetActive(showWorkspace);
         foreach (var tr in transformRenderers)
             tr.enabled = showTransforms; 
         foreach (var hg in highlightGroups)

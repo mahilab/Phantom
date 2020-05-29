@@ -11,6 +11,9 @@ public:
 
     Hardware() : m_q8(false) { }
     ~Hardware() { 
+        for (int i = 0; i < 3; ++i) {
+            m_butts[i].configure(2, 10_Hz, 1000_Hz);
+        }
         stop(); 
     }
     /// Starts running the Phantom
@@ -43,31 +46,38 @@ public:
     }
     /// Gets the Phantom joint angles [rad]
     virtual Vector3d get_positions() {
+        static mahi::util::Clock clk;
         m_q8.encoder.read();
         Vector3d Q;
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < 3; ++i) {
             Q[i] = m_q8.encoder.positions[i] / Model::Eta[i];
+            m_diff[i].update(Q[i], clk.get_elapsed_time());            
+        }
         return Q;
     }
     /// Gets the Phantom joint velocities [rad/s]
     virtual Vector3d get_velocities() {
-        m_q8.read_all();
+        // m_q8.read_all();
         Vector3d Qd;   
-        for (int i = 0; i < 3; ++i) 
-            Qd[i] = m_q8.velocity.velocities[i] / Model::Eta[i];
+        for (int i = 0; i < 3; ++i) {
+            // Qd[i] = m_q8.velocity.velocities[i] / Model::Eta[i];
+            Qd[i] = m_butts[i].update(m_diff[i].get_value());
+        }
         return Qd;
     }
-    /// Gets the Phantom joint Torques [rad/s]
+    /// Gets the Phantom joint torques [Nm]
     virtual Vector3d get_torques() {
         Vector3d Tau;   
         for (int i = 0; i < 3; ++i) 
-            Tau[i] = m_q8.AO[i];
+            Tau[i] = m_q8.AO[i]; // TODO: conversion
         return Tau;
     }
 private:
     Q8Usb m_q8;
     static constexpr double m_command_gain  = 10.0 / 1.5f; // [V/A]
     static constexpr double m_directions[3] = {1,-1,-1};
+    mahi::util::Differentiator m_diff[3];
+    mahi::util::Butterworth    m_butts[3];
 };
 
 }
