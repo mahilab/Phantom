@@ -13,7 +13,7 @@ public class PhantomWorkspace : MonoBehaviour
         Cloud
     };
 
-    public Mode mode;
+    Mode mode = Mode.None;
 
     [Header("References")]
     public PhantomModel model;
@@ -30,13 +30,13 @@ public class PhantomWorkspace : MonoBehaviour
             // UnityEditor.AssetDatabase.SaveAssets();
             #endif
         }
-        if (meshCloud == null) {
-            meshCloud = GenerateMeshCloud();
-            #if UNITY_EDITOR
-            // UnityEditor.AssetDatabase.CreateAsset(meshCloud, "Assets/Phantom/Models/WorkspaceCloud.asset");
-            // UnityEditor.AssetDatabase.SaveAssets();
-            #endif
-        }
+        // if (meshCloud == null) {
+        //     meshCloud = GenerateMeshCloud();
+        //     #if UNITY_EDITOR
+        //     // UnityEditor.AssetDatabase.CreateAsset(meshCloud, "Assets/Phantom/Models/WorkspaceCloud.asset");
+        //     // UnityEditor.AssetDatabase.SaveAssets();
+        //     #endif
+        // }
         SetMesh();
     }
 
@@ -51,9 +51,9 @@ public class PhantomWorkspace : MonoBehaviour
         if (mode == Mode.None) 
             mode = Mode.Hull;        
         else if (mode == Mode.Hull) 
-            mode = Mode.Cloud;
-        else if (mode == Mode.Cloud)
             mode = Mode.None;
+        // else if (mode == Mode.Cloud)
+        //     mode = Mode.None;
         SetMesh();        
     }
 
@@ -63,8 +63,8 @@ public class PhantomWorkspace : MonoBehaviour
             mf.mesh = null;
         else if (mode == Mode.Hull)
             mf.mesh = meshHull;
-        else if (mode == Mode.Cloud)
-            mf.mesh = meshCloud;
+        // else if (mode == Mode.Cloud)
+        //     mf.mesh = meshCloud;
     }
 
     IEnumerator TraceWorkspace() {
@@ -96,7 +96,7 @@ public class PhantomWorkspace : MonoBehaviour
 
     Mesh GenerateMeshCloud() {
         Mesh mesh = new Mesh();
-        mesh.name = "phantom_workspace";
+        mesh.name = "phantom_workspace_cloud";
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         int n = 200;
         List<Vector3> verts = new List<Vector3>(n*n*n);
@@ -124,7 +124,7 @@ public class PhantomWorkspace : MonoBehaviour
 
     Mesh GenerateMeshHull() {
         Mesh mesh = new Mesh();
-        mesh.name = "phantom_workspace";
+        mesh.name = "phantom_workspace_hull";
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
         float[] q2s = {120,-85,35,120};
