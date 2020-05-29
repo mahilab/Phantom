@@ -26,15 +26,15 @@ public class PhantomWorkspace : MonoBehaviour
         if (meshHull == null) {
             meshHull = GenerateMeshHull();
             #if UNITY_EDITOR
-            UnityEditor.AssetDatabase.CreateAsset(meshHull, "Assets/Phantom/Models/WorkspaceHull.asset");
-            UnityEditor.AssetDatabase.SaveAssets();
+            // UnityEditor.AssetDatabase.CreateAsset(meshHull, "Assets/Phantom/Models/WorkspaceHull.asset");
+            // UnityEditor.AssetDatabase.SaveAssets();
             #endif
         }
         if (meshCloud == null) {
             meshCloud = GenerateMeshCloud();
             #if UNITY_EDITOR
-            UnityEditor.AssetDatabase.CreateAsset(meshCloud, "Assets/Phantom/Models/WorkspaceCloud.asset");
-            UnityEditor.AssetDatabase.SaveAssets();
+            // UnityEditor.AssetDatabase.CreateAsset(meshCloud, "Assets/Phantom/Models/WorkspaceCloud.asset");
+            // UnityEditor.AssetDatabase.SaveAssets();
             #endif
         }
         SetMesh();

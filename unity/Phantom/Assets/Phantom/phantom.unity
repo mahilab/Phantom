@@ -1433,8 +1433,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mode: 0
   model: {fileID: 997594206}
-  meshHull: {fileID: 4300000, guid: 2f440e6a70faa9b4cae8ee7dbc96db14, type: 2}
-  meshCloud: {fileID: 4300000, guid: 24d3b70003a2bed4b8ebc2bacab7aed6, type: 2}
+  meshHull: {fileID: 0}
+  meshCloud: {fileID: 0}
 --- !u!1 &1053520854
 GameObject:
   m_ObjectHideFlags: 0
