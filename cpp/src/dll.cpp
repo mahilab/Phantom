@@ -37,19 +37,21 @@ EXPORT void set_target(double x, double y, double z) {
 class Debugger : public Application {
 public:
 
-    enum Mode { None = 0, JST, JSPD, TSF, TSPD };
+    enum Mode { None = 0, JST, JSPD, TSF, TSPD, TSEPD};
 
     bool keep_open = true;
     Ptr<JointSpaceTorque> jst;
     Ptr<JointSpacePD> jspd;
     Ptr<TaskSpaceForce> tsf;
     Ptr<TaskSpacePD> tspd;
+    Ptr<TaskSpaceEulerPD> tsepd;
 
     Debugger() : Application() { 
         jst  = std::make_shared<JointSpaceTorque>();
         jspd = std::make_shared<JointSpacePD>();
         tsf  = std::make_shared<TaskSpaceForce>();
         tspd = std::make_shared<TaskSpacePD>();
+        tsepd = std::make_shared<TaskSpaceEulerPD>();
     }
 
     void update() override {
@@ -58,7 +60,7 @@ public:
             Lock unity_lock(g_unity_mtx);
             static int mode = 0;
             static bool track_target = false;
-            if (ImGui::ModeSelector(&mode, {"None", "JS-T", "JS-PD","TS-F","TS-PD"})) {
+            if (ImGui::ModeSelector(&mode, {"None", "JS-T", "JS-PD","TS-F","TS-PD","TSE-PD"})) {
                 if (mode == None)
                     g_sim.set_law(nullptr);
                 if (mode == JST)
@@ -69,6 +71,8 @@ public:
                     g_sim.set_law(tsf);
                 else if (mode == TSPD)
                     g_sim.set_law(tspd);
+                else if (mode == TSEPD)
+                    g_sim.set_law(tsepd);
             }
             ImGui::Separator();
             auto Q = g_sim.get_positions();
@@ -107,6 +111,17 @@ public:
                     ImGui::DragDouble3("Position [m]", tspd->P_ref.data(), 0.001f, -1, 1);
                 ImGui::DragDouble3("Kp [N/m]", tspd->Kp.data(), 0.001f, 0, 100);
                 ImGui::DragDouble3("Kd [Ns/m", tspd->Kd.data(), 0.001f, 0, 10);
+            }
+            else if (mode == TSEPD) {
+                ImGui::Checkbox("Track Target", &track_target);
+                ImGui::Checkbox("G Comp", &tsepd->gcomp);
+                if (track_target)
+                    tsepd->P_ref = g_target;
+                else
+                    ImGui::DragDouble3("Position [m]", tsepd->P_ref.data(), 0.001f, -1, 1);
+                ImGui::DragDouble3("Euler Angles [rad]", tsepd->EulerAngles.data(), .001f, -mahi::util::PI/2,mahi::util::PI/2);
+                ImGui::DragDouble3("Kp [N/m]", tsepd->Kp.data(), 0.001f, 0, 100);
+                ImGui::DragDouble3("Kd [Ns/m", tsepd->Kd.data(), 0.001f, 0, 10);
             }
             ImGui::Separator();
             ImGui::Text("Q: %.2f, %.2f, %.2f", Q[0], Q[1], Q[2]);

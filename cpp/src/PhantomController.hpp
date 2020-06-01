@@ -61,6 +61,30 @@ struct TaskSpacePD : public ControlLaw {
     Vector3d P_ref;
 };
 
+struct TaskSpaceEulerPD : public ControlLaw {
+    TaskSpaceEulerPD() { gcomp = true; Kp.fill(100); Kd.fill(5); P_ref.fill(0); EulerAngles.fill(0);}
+    virtual Vector3d control(Vector3d Q, Vector3d Qd, double dt) {
+        Vector3d G = gcomp ? Model::G(Q) : Vector3d::Zero();
+        Matrix3d Rx, Ry, Rz;
+        Rx << 1, 0, 0, 0, mahi::util::cos(EulerAngles(0)), -mahi::util::sin(EulerAngles(0)), 0, mahi::util::sin(EulerAngles(0)), mahi::util::cos(EulerAngles(0));
+        Ry << mahi::util::cos(EulerAngles(1)), 0, mahi::util::sin(EulerAngles(1)), 0, 1, 0, -mahi::util::sin(EulerAngles(1)), 0, mahi::util::cos(EulerAngles(1));
+        Rz << mahi::util::cos(EulerAngles(2)), -mahi::util::sin(EulerAngles(2)), 0, mahi::util::sin(EulerAngles(2)), mahi::util::cos(EulerAngles(2)), 0, 0, 0, 1;
+        auto R = Rx*Ry*Rz;
+        auto J_rot = R*Model::J(Q);
+        Matrix3d Kp_diag = Kp.asDiagonal();
+        Matrix3d Kd_diag = Kd.asDiagonal();
+        Matrix3d Kpq = J_rot.transpose() * Kp_diag * J_rot;
+        Matrix3d Kdq = J_rot.transpose() * Kd_diag * J_rot;
+        Vector3d Q_ref = Model::inverse_kinematics(P_ref, Q);
+        return G + Kpq * (Q_ref - Q) - Kdq * (Qd);       
+    }
+    bool gcomp;
+    Vector3d EulerAngles;
+    Vector3d Kp;
+    Vector3d Kd;
+    Vector3d P_ref;
+};
+
 //=============================================================================
 // CONTROLLER
 //=============================================================================

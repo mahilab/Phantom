@@ -53,7 +53,7 @@ public:
             Qd[i] = m_q8.velocity.velocities[i] / Model::Eta[i];
         return Qd;
     }
-    /// Gets the Phantom joint Torques [rad/s]
+    /// Gets the Phantom joint Torques [Nm]
     virtual Vector3d get_torques() {
         Vector3d Tau;   
         for (int i = 0; i < 3; ++i) 
