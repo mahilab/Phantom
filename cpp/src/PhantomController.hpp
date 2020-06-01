@@ -96,6 +96,9 @@ public:
                       Frequency rate = 1000_Hz) 
         : m_interface(std::move(interface)), m_law(std::move(law)), m_rate(rate), m_running(false)
     { }
+    ~Controller() {
+        stop();
+    }
     /// Start the controller
     void start() {
         if (!m_running) {
@@ -133,6 +136,10 @@ public:
     /// Acquire controller thread mutex 
     inline Lock get_lock() {
         return Lock(m_mtx);
+    }
+    /// Return true if the Controller is running
+    bool running() {
+        return m_running;
     }
 private:
     void thread_func() {

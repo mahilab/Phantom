@@ -1,4 +1,5 @@
 #include "PhantomSimulation.hpp"
+#include "PhantomHardware.hpp"
 #include "PhantomController.hpp"
 #include <Mahi/Util.hpp>
 #include <Mahi/Gui.hpp>
@@ -46,18 +47,31 @@ public:
     Ptr<TaskSpacePD> tspd;
     Ptr<TaskSpaceEulerPD> tsepd;
 
-    Debugger() : Application() { 
+    Debugger() : 
+        Application(),
+        m_phantom(std::make_shared<Phantom::Hardware>()),
+        m_jspd(std::make_shared<Phantom::JointSpacePD>()),
+        m_controller(m_phantom, m_jspd, 1000_Hz)
+    { 
         jst  = std::make_shared<JointSpaceTorque>();
         jspd = std::make_shared<JointSpacePD>();
         tsf  = std::make_shared<TaskSpaceForce>();
         tspd = std::make_shared<TaskSpacePD>();
         tsepd = std::make_shared<TaskSpaceEulerPD>();
+        m_jspd->Kp = {1,1,1};
+        m_jspd->Kd = {0.02, 0.02, 0.02};
     }
 
     void update() override {
         ImGui::Begin("Test",&keep_open);
         {
             Lock unity_lock(g_unity_mtx);
+
+            if (ImGui::Button("Start"))
+                m_controller.start();
+            if (ImGui::Button("Stop"))
+                m_controller.stop();
+
             static int mode = 0;
             static bool track_target = false;
             if (ImGui::ModeSelector(&mode, {"None", "JS-T", "JS-PD","TS-F","TS-PD","TSE-PD"})) {
@@ -79,6 +93,7 @@ public:
             auto P = Model::forward_kinematics(Q);
             auto T = g_sim.get_torques();
             auto lock = g_sim.get_lock();
+            auto h_lock = m_controller.get_lock();
             if (mode == JST) {
                 ImGui::DragDouble3("Torque [Nm]", jst->Tau.data(), 0.001f, -1, 1);               
             }
@@ -94,6 +109,7 @@ public:
                     else
                         ImGui::DragDouble3("Position [m]", EE.data(), 0.001f, -1, 1);
                     jspd->Q_ref = Model::inverse_kinematics(EE, jspd->Q_ref);
+                    m_jspd->Q_ref = jspd->Q_ref;
                 }
                 else
                     ImGui::DragDouble3("Theta [rad]", jspd->Q_ref.data(), 0.001f, -1, 1);                
@@ -133,6 +149,11 @@ public:
         if (!keep_open)
             quit();
     }
+
+    std::shared_ptr<Phantom::Hardware> m_phantom;
+    std::shared_ptr<Phantom::JointSpaceTorque> m_jst;
+    std::shared_ptr<Phantom::JointSpacePD> m_jspd;
+    Phantom::Controller m_controller;
 };
 
 std::unique_ptr<Debugger> g_debugger = nullptr;

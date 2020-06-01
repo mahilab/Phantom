@@ -7,19 +7,64 @@ using System.Linq;
 public class PhantomWorkspace : MonoBehaviour
 {
 
+    public enum Mode {
+        None,
+        Hull,
+        Cloud
+    };
+
+    Mode mode = Mode.None;
+
+    [Header("References")]
     public PhantomModel model;
+    public Mesh meshHull;
+    public Mesh meshCloud;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        GetComponent<MeshFilter>().mesh = GenerateMeshHull();
+        if (meshHull == null) {
+            meshHull = GenerateMeshHull();
+            #if UNITY_EDITOR
+            // UnityEditor.AssetDatabase.CreateAsset(meshHull, "Assets/Phantom/Models/WorkspaceHull.asset");
+            // UnityEditor.AssetDatabase.SaveAssets();
+            #endif
+        }
+        // if (meshCloud == null) {
+        //     meshCloud = GenerateMeshCloud();
+        //     #if UNITY_EDITOR
+        //     // UnityEditor.AssetDatabase.CreateAsset(meshCloud, "Assets/Phantom/Models/WorkspaceCloud.asset");
+        //     // UnityEditor.AssetDatabase.SaveAssets();
+        //     #endif
+        // }
+        SetMesh();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-            StartCoroutine(TraceWorkspace());
+        if (Input.GetKeyDown(KeyCode.W))
+            ToggleMesh();
+    }
+
+    void ToggleMesh() {
+        if (mode == Mode.None) 
+            mode = Mode.Hull;        
+        else if (mode == Mode.Hull) 
+            mode = Mode.None;
+        // else if (mode == Mode.Cloud)
+        //     mode = Mode.None;
+        SetMesh();        
+    }
+
+    void SetMesh() {
+        var mf = GetComponent<MeshFilter>();
+        if (mode == Mode.None)
+            mf.mesh = null;
+        else if (mode == Mode.Hull)
+            mf.mesh = meshHull;
+        // else if (mode == Mode.Cloud)
+        //     mf.mesh = meshCloud;
     }
 
     IEnumerator TraceWorkspace() {
@@ -49,9 +94,9 @@ public class PhantomWorkspace : MonoBehaviour
         }
     }
 
-    Mesh GenerateMeshFill() {
+    Mesh GenerateMeshCloud() {
         Mesh mesh = new Mesh();
-        mesh.name = "phantom_workspace";
+        mesh.name = "phantom_workspace_cloud";
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         int n = 200;
         List<Vector3> verts = new List<Vector3>(n*n*n);
@@ -66,7 +111,7 @@ public class PhantomWorkspace : MonoBehaviour
                     float q3 = Mathf.Lerp(-30,175,t3) + Random.Range(-1,1);
                     if ((q3-q2) <= 55 && (q2-q3) <= 65) {
 
-                        verts.Add(Phantom.ToUnity(Phantom.ForwardKinematics(q1,q2,q3)));
+                        verts.Add(PhantomModel.ToUnity(PhantomModel.ForwardKinematics(q1,q2,q3)));
                     }
                 }
             }
@@ -79,7 +124,7 @@ public class PhantomWorkspace : MonoBehaviour
 
     Mesh GenerateMeshHull() {
         Mesh mesh = new Mesh();
-        mesh.name = "phantom_workspace";
+        mesh.name = "phantom_workspace_hull";
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
         float[] q2s = {120,-85,35,120};
@@ -101,7 +146,7 @@ public class PhantomWorkspace : MonoBehaviour
                     float q1 = Mathf.Lerp(-90,90,t1) + Random.Range(-0.1f,0.1f);
                     float q2 = Mathf.Lerp(q2s[k],q2s[j],t3);
                     float q3 = Mathf.Lerp(q3s[k],q3s[j],t3);
-                    verts.Add(Phantom.ToUnity(Phantom.ForwardKinematics(q1,q2,q3)));
+                    verts.Add(PhantomModel.ToUnity(PhantomModel.ForwardKinematics(q1,q2,q3)));
                 }
             }
         }
@@ -119,7 +164,7 @@ public class PhantomWorkspace : MonoBehaviour
                     float q3 = Mathf.Lerp(-30,175,t3) + Random.Range(-1,1);
                     if ((q3-q2) <= 55 && (q2-q3) <= 65) {
 
-                        verts.Add(Phantom.ToUnity(Phantom.ForwardKinematics(q1,q2,q3)));
+                        verts.Add(PhantomModel.ToUnity(PhantomModel.ForwardKinematics(q1,q2,q3)));
                     }
                 }
             }
