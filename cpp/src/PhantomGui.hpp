@@ -21,6 +21,7 @@ public:
         add_control_law("Joint Space PD (IK)", std::make_shared<JointSpaceIK>());
         add_control_law("Task Space Force", std::make_shared<TaskSpaceForce>());
         add_control_law("Task Space PD", std::make_shared<TaskSpacePD>());
+        add_control_law("Task Space PD (Euler)", std::make_shared<TaskSpaceEulerPD>());
         add_control_law("Sin Tracker", std::make_shared<SinTracker>());
         add_control_law("Circle Tracker", std::make_shared<CircleTracker>());
         add_control_law("Python Script", std::make_shared<PythonScript>());

@@ -10,16 +10,9 @@ FetchContent_Declare(mahi-gui GIT_REPOSITORY https://github.com/mahilab/mahi-gui
 FetchContent_MakeAvailable(mahi-gui)
 FetchContent_Declare(mahi-daq GIT_REPOSITORY https://github.com/mahilab/mahi-daq.git) 
 FetchContent_MakeAvailable(mahi-daq)
-# FetchContent_Declare(iir1 GIT_REPOSITORY https://github.com/berndporr/iir1) 
-# FetchContent_MakeAvailable(iir1)
-add_subdirectory(3rdparty/iir)
 
-# add_library(phantom SHARED src/dll.cpp src/PhantomModel.hpp src/PhantomModel.cpp)
-# target_link_libraries(phantom mahi::robo mahi::com mahi::gui mahi::daq)
-# add_custom_command(TARGET phantom POST_BUILD 
-#                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#                $<TARGET_FILE:phantom>              
-#                "${PROJECT_SOURCE_DIR}/../unity/Phantom/Assets/Phantom/Plugins/")
+
+add_subdirectory(3rdparty/iir)
 
 add_executable(phantom_control src/phantom_control.cpp src/PhantomModel.hpp src/PhantomModel.cpp src/PhantomHardware.hpp 3rdparty/ImGuiColorTextEdit/TextEditor.cpp)
 target_link_libraries(phantom_control mahi::robo mahi::com mahi::gui mahi::daq iir_static)
