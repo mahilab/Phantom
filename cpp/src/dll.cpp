@@ -48,7 +48,7 @@ public:
 
     Debugger() : 
         Application(),
-        m_phantom(std::make_shared<Phantom::Hardware>()),
+        m_phantom(std::make_shared<Phantom::Hardware<Q8Usb>>()),
         m_jspd(std::make_shared<Phantom::JointSpacePD>()),
         m_controller(m_phantom, m_jspd, 1000_Hz)
     { 
@@ -135,7 +135,7 @@ public:
             quit();
     }
 
-    std::shared_ptr<Phantom::Hardware> m_phantom;
+    std::shared_ptr<Phantom::Hardware<Q8Usb>> m_phantom;
     std::shared_ptr<Phantom::JointSpaceTorque> m_jst;
     std::shared_ptr<Phantom::JointSpacePD> m_jspd;
     Phantom::Controller m_controller;

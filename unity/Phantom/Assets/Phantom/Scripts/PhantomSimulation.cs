@@ -22,12 +22,12 @@ public class PhantomSimulation : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        PhantomPlugin.start();
+        Plugin.start();
     }
 
     void OnApplicationQuit()
     {
-        PhantomPlugin.stop();
+        Plugin.stop();
     }
 
     void Update()
@@ -45,10 +45,10 @@ public class PhantomSimulation : MonoBehaviour
         // tau[1] = 0.1 * Input.GetAxis("Vertical");
         // tau[2] = 0.1 * Input.GetAxis("Vertical2");
 
-        PhantomPlugin.get_positions(radians);
+        Plugin.get_positions(radians);
 
         Vector3 target_pos = PhantomModel.FromUnity(target.transform.localPosition);
-        PhantomPlugin.set_target(target_pos.x, target_pos.y, target_pos.z);
+        Plugin.set_target(target_pos.x, target_pos.y, target_pos.z);
 
         for (int i = 0; i < 3; ++i)
             model.Q[i] = Mathf.Rad2Deg * (float)radians[i];
@@ -59,17 +59,17 @@ public class PhantomSimulation : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.G))
         {
-            PhantomPlugin.open_tuner();   
+            Plugin.open_tuner();   
         }
     }
 
     void Restart()
     {
-        PhantomPlugin.stop();
-        PhantomPlugin.start();
+        Plugin.stop();
+        Plugin.start();
     }
 
-    public static class PhantomPlugin {
+    public static class Plugin {
         [DllImport("phantom")] 
         public static extern void start();
         [DllImport("phantom")] 

@@ -1,7 +1,6 @@
 #pragma once
 #include "PhantomInterface.hpp"
 
-
 namespace Phantom {
 
 class Simulation : public Interface {
