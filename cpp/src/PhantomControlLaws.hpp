@@ -1,6 +1,8 @@
 #pragma once
 #include "PhantomInterface.hpp"
 #include <Mahi/Gui.hpp>
+#include "Python.h"
+#include <algorithm>
 
 namespace Phantom {
 
@@ -162,16 +164,84 @@ struct CircleTracker : public JointSpaceIK {
 };
 
 struct PythonScript : public ControlLaw {
+    PythonScript(){
+        Py_Initialize();
+    }
+    ~PythonScript(){
+        // Clean up
+        Py_DECREF(pFunc);
+        Py_DECREF(pModule);
+        Py_DECREF(pDict);
+        Py_Finalize();
+    }
     virtual Vector3d control(Vector3d Q, Vector3d Qd, double dt) override {
-        return Vector3d::Zero();
+        Clock control_clock;
+        if (py_enabled){
+            PyObject *pResult, *pArgQ, *pArgQd, *pArgQref, *pArgs, *pValue, *pTau;
+            pArgQ    = PyTuple_New(3);
+            pArgQd   = PyTuple_New(3);
+            pArgQref = PyTuple_New(3);
+            pArgs    = PyTuple_New(3);
+            for (size_t i = 0; i < 3; i++){
+                // convert all values to PyFloats and write them to appropriate tuples
+                pValue = PyFloat_FromDouble(Q[i]);
+                PyTuple_SetItem(pArgQ, i, pValue);
+                pValue = PyFloat_FromDouble(Qd[i]);
+                PyTuple_SetItem(pArgQd, i, pValue);
+                pValue = PyFloat_FromDouble(Q_ref[i]);
+                PyTuple_SetItem(pArgQref, i, pValue);
+            }
+        
+            // construct tuple of tuples as the arguments
+            PyTuple_SetItem(pArgs, 0, pArgQ);
+            PyTuple_SetItem(pArgs, 1, pArgQd);
+            PyTuple_SetItem(pArgs, 2, pArgQref);
+
+            pResult = PyObject_CallObject(pFunc, pArgs);
+            
+            Vector3d Tau = Vector3d::Zero();
+            for (size_t i = 0; i < 3; i++){
+                // iterate through output tuple and get the result
+                pTau = PyTuple_GetItem(pResult, i);
+                Tau[i] = PyFloat_AsDouble(pTau);
+            }
+            
+            if(PyErr_Occurred()){
+                py_err = true;
+            }
+
+            Py_DECREF(pResult);
+            Py_DECREF(pArgQ);
+            Py_DECREF(pArgQd);
+            Py_DECREF(pArgQref);
+            Py_DECREF(pArgs);
+            Py_DECREF(pValue);
+            Py_DECREF(pTau);
+            control_time = control_clock.get_elapsed_time().as_microseconds();
+            return py_err ? Vector3d::Zero() : Tau;
+        } 
+        else{
+            control_time = control_clock.get_elapsed_time().as_microseconds();
+            return Vector3d::Zero();
+        } 
     }
     virtual void imgui() override {
         if (ImGui::Button("Open File")) {
             auto func = [this]() {
                 std::string tmp;
                 if (mahi::gui::open_dialog(tmp, {{"Python", "py"}}) == mahi::gui::DialogResult::DialogOkay) {
+                    std::replace( tmp.begin(), tmp.end(), '\\', '/');
                     Lock lock(m_mtx);
-                    m_file = tmp;
+                    size_t pathindex = tmp.find_last_of("/");
+                    size_t lastindex = tmp.find_last_of(".");
+                    std::string path = tmp.substr(0,pathindex);
+                    m_file = tmp.substr(pathindex+1,lastindex-pathindex-1);
+
+                    PySys_SetPath(&path[0]);
+                    pModule = PyImport_ImportModule(m_file.c_str());
+                    pDict = PyModule_GetDict(pModule);
+                    pFunc = PyDict_GetItemString(pDict, "calc_torques");
+                    py_enabled = PyCallable_Check(pFunc) ? true : false;
                 }               
             };
             std::thread thrd(func); thrd.detach();
@@ -179,12 +249,22 @@ struct PythonScript : public ControlLaw {
         {
             Lock lock(m_mtx);
             ImGui::SameLine();
-            ImGui::Text(m_file.c_str());
+            ImGui::Text(("Python File: " + m_file).c_str());
+        }
+        if(py_enabled){
+            ImGui::DragDouble3("Joint Angles [rad]",Q_ref.data(), 0.001f, -1,1);
+            ImGui::InputInt("Control Time", &control_time);
+            if(py_err) ImGui::TextColored(mahi::gui::Reds::Red, "Error in Python Code");
         }
     }
 private:
     std::mutex m_mtx;
     std::string m_file;
+    Vector3d Q_ref;
+    int control_time;
+    bool py_enabled = false;
+    bool py_err = false;
+    PyObject *pFunc, *pModule, *pDict;
 };
 
 } // namespace Phantom

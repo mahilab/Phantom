@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(phantom VERSION 0.1.0)
 
+find_package(Python COMPONENTS Interpreter Development)
+
 include(FetchContent) 
 FetchContent_Declare(mahi-robo GIT_REPOSITORY https://github.com/mahilab/mahi-robo.git) 
 FetchContent_MakeAvailable(mahi-robo)
@@ -15,11 +17,11 @@ FetchContent_MakeAvailable(mahi-daq)
 add_subdirectory(3rdparty/iir)
 
 add_executable(phantom_control src/phantom_control.cpp src/PhantomModel.hpp src/PhantomModel.cpp src/PhantomHardware.hpp 3rdparty/ImGuiColorTextEdit/TextEditor.cpp)
-target_link_libraries(phantom_control mahi::robo mahi::com mahi::gui mahi::daq iir_static)
+target_link_libraries(phantom_control mahi::robo mahi::com mahi::gui mahi::daq iir_static Python::Python)
 target_include_directories(phantom_control PRIVATE "3rdparty/iir" "3rdparty/ImGuiColorTextEdit")
 
 add_library(phantom_plugin SHARED src/phantom_plugin.cpp src/PhantomModel.hpp src/PhantomModel.cpp src/PhantomHardware.hpp)
-target_link_libraries(phantom_plugin mahi::robo mahi::com mahi::gui mahi::daq iir_static)
+target_link_libraries(phantom_plugin mahi::robo mahi::com mahi::gui mahi::daq iir_static Python::Python)
 target_include_directories(phantom_plugin PRIVATE "3rdparty/iir/")
 add_custom_command(TARGET phantom_plugin POST_BUILD 
                COMMAND ${CMAKE_COMMAND} -E copy_if_different
