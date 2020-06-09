@@ -36,7 +36,7 @@ This repository contains code and documentation required to reboot older Phantom
 
 # Phantom Pinouts
 
-![Phantom Pinout](https://github.com/mahilab/PhantomPremium/blob/master/phantom_pinout.svg)
+![Phantom Pinout](https://github.com/mahilab/PhantomPremium/blob/master/docs/phantom_pinout.svg)
 
 ## Motor Encoders (D-Sub DA-15)
 
