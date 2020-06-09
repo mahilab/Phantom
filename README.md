@@ -1,4 +1,4 @@
-This repository contains code and documentation required to reboot older Phantom Premium models (circa 2000) sold by SensAble Technologies Inc.  
+This repository contains code and documentation required to reboot older Phantom Premium models (circa 2000) sold by SensAble Technologies Inc. It also contains mathematical models for kinematics, dynamics, simulation, and a high fidelity Solidoworks model and Unity visualization.
 
 # Phantom Hardware
 
