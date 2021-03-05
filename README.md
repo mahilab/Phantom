@@ -1,4 +1,4 @@
-This repository contains code and documentation required to reboot older Phantom Premium models (circa 2000) sold by SensAble Technologies Inc.  
+This repository contains code and documentation required to reboot older Phantom Premium models (circa 2000) sold by SensAble Technologies Inc. It also contains mathematical models for kinematics, dynamics, simulation, and a high fidelity Solidoworks model and Unity visualization.
 
 # Phantom Hardware
 
@@ -36,7 +36,7 @@ This repository contains code and documentation required to reboot older Phantom
 
 # Phantom Pinouts
 
-![Phantom Pinout](https://github.com/mahilab/PhantomPremium/blob/master/phantom_pinout.svg)
+![Phantom Pinout](https://raw.githubusercontent.com/mahilab/Phantom/251c0e3e5d1103b492218ae2294e221b7b354ee5/docs/phantom_pinout.svg?token=AHBVCA2CFB6SP2ZFLN3FNQ2637EQA)
 
 ## Motor Encoders (D-Sub DA-15)
 
