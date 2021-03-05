@@ -25,6 +25,7 @@ public:
         add_control_law("Sin Tracker", std::make_shared<SinTracker>());
         add_control_law("Circle Tracker", std::make_shared<CircleTracker>());
         add_control_law("Python Script", std::make_shared<PythonScript>());
+        add_control_law("Tasbi Button", std::make_shared<TasbiButton>());
      }
 
     /// Add a control law that can be used from the gui
@@ -118,9 +119,9 @@ private:
         ImPlot::SetNextPlotLimitsX(tmin, tmax, m_pause_plot ? ImGuiCond_Once : ImGuiCond_Always);
         ImPlot::SetNextPlotLimitsY(-2,0.5,ImGuiCond_Once,0);
         ImPlot::SetNextPlotLimitsY(-1.5,5,ImGuiCond_Once,1);
-        if (ImPlot::BeginPlot("##Plot", NULL, NULL, ImVec2(-1,-1), ImPlotFlags_Default | ImPlotFlags_YAxis2 | ImPlotFlags_YAxis3)) {            
+        if (ImPlot::BeginPlot("##Plot", NULL, NULL, ImVec2(-1,-1), ImPlotFlags_YAxis2 | ImPlotFlags_YAxis3)) {            
             
-            ImPlot::SetColormap(ImPlotColormap_Paired);
+            // ImPlot::SetColormap(ImPlotColormap_Paired);
             
             ImPlot::SetPlotYAxis(0);
             ImPlot::PlotLine("Q0", data[Data_Time], data[Data_Q0], m_samples); 
@@ -143,7 +144,7 @@ private:
                 ImPlot::PlotLine("Qd2", data[Data_Time], data[Data_Qd2], m_samples);
             }
             if (show_ee) {
-                ImPlot::SetColormap(ImPlotColormap_Cool);
+                // ImPlot::SetColormap(ImPlotColormap_Cool);
                 ImPlot::SetPlotYAxis(2);
                 ImPlot::PlotLine("X", data[Data_Time], data[Data_X], m_samples);
                 ImPlot::PlotLine("Y", data[Data_Time], data[Data_Y], m_samples);
@@ -159,13 +160,12 @@ private:
             quit();
     }
 
-private:
-
     struct ControlLawHolder {
         std::string name;
         Ptr<ControlLaw> law;
     };
 
+public: // fuck it
     bool m_open = true;
     Ptr<Controller>    m_controller;
     Ptr<Interface>     m_phantom;

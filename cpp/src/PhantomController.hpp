@@ -89,6 +89,11 @@ public:
         Lock lock(m_mtx);
         return m_phantom->get_torques();
     }  
+    /// Zeros the Phantom joint angles
+    virtual bool zero() {
+        Lock lock(m_mtx);
+        return m_phantom->zero();
+    }
     /// Return true if the Controller is running (thread safe)
     bool running() {
         return m_running;

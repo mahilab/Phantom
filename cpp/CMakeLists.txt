@@ -29,3 +29,11 @@ add_custom_command(TARGET phantom_plugin POST_BUILD
                COMMAND ${CMAKE_COMMAND} -E copy_if_different
                $<TARGET_FILE:phantom_plugin>              
                "${PROJECT_SOURCE_DIR}/../unity/Phantom/Build/Phantom_Data/Plugins/")
+
+add_library(phantom_tasbi_plugin SHARED src/phantom_tasbi_plugin.cpp src/PhantomModel.hpp src/PhantomModel.cpp src/PhantomHardware.hpp)
+target_link_libraries(phantom_tasbi_plugin mahi::robo mahi::com mahi::gui mahi::daq iir_static)
+target_include_directories(phantom_tasbi_plugin PRIVATE "3rdparty/iir/")
+
+add_executable(phantom_tasbi_force_check src/phantom_tasbi_force_check.cpp src/PhantomModel.hpp src/PhantomModel.cpp src/PhantomHardware.hpp 3rdparty/ImGuiColorTextEdit/TextEditor.cpp)
+target_link_libraries(phantom_tasbi_force_check mahi::robo mahi::com mahi::gui mahi::daq iir_static)
+target_include_directories(phantom_tasbi_force_check PRIVATE "3rdparty/iir" "3rdparty/ImGuiColorTextEdit")

@@ -1,0 +1,20 @@
+function J = phantom_jacobian(q1, q2, q3)
+l1 = 0.209550;
+l2 = 0.169545;
+% l3 = 0.031750;
+J = zeros(3,3);
+s1 = sin(q1);
+s2 = sin(q2);
+s3 = sin(q3);
+c1 = cos(q1);
+c2 = cos(q2);
+c3 = cos(q3);
+J(1, 1) = -s1 * (l1 * c2 + l2 * s3);
+J(1, 2) = -l1 * c1 * s2;
+J(1, 3) = l2 * c1 * c3;
+J(2, 1) = c1 * (l1 * c2 + l2 * s3);
+J(2, 2) = -l1 * s1 * s2;
+J(2, 3) = l2 * c3 * s1;
+J(3, 2) = l1 * c2;
+J(3, 3) = l2 * s3;
+end

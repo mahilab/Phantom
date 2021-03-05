@@ -23,7 +23,7 @@ struct JointSpaceTorque : public ControlLaw {
 };
 
 struct JointSpacePD : public ControlLaw {
-    JointSpacePD() { Kp.fill(5); Kd.fill(0.1f); Q_ref.fill(0); }
+    JointSpacePD() { Kp.fill(5); Kd.fill(0.1); Q_ref.fill(0); }
     virtual Vector3d control(Vector3d Q, Vector3d Qd, double dt) override {
         return Kp.cwiseProduct(Q_ref - Q) - Kd.cwiseProduct(Qd);               
     }
@@ -33,6 +33,72 @@ struct JointSpacePD : public ControlLaw {
         ImGui::DragDouble3("Kd [Ns/m]", Kd.data(), 0.001f, 0, 10);
     }
     Vector3d Kp, Kd, Q_ref;
+};
+
+struct TasbiButton : public ControlLaw {
+    TasbiButton() : hHistory(20) { 
+        Kp.fill(20); Kd.fill(0.05); Q_ref.fill(0);
+        Q_ref(1) = 0.06;
+        gcomp = true;
+        weight = 0.25;
+        Kb = 25;
+    }
+
+    virtual Vector3d control(Vector3d Q, Vector3d Qd, double dt) override {
+
+        Kb = mahi::util::clamp(Kb, Kb_min, Kb_max);
+
+        Vector3d G = gcomp ? Model::G(Q) : Vector3d::Zero();
+
+        Kp(1) = Model::l1*Model::l1*Kb;
+        Kd(1) = -3E-06*Kb*Kb + 0.0013*Kb + 0.0326; // empirically determined
+
+        G(1) += Model::l1 * weight; // ignoring cos(q2) because small angle
+        Tau = Kp.cwiseProduct(Q_ref - Q) - Kd.cwiseProduct(Qd);
+        
+        F = Model::torques_to_forces(Tau, Q);
+        auto ee = Model::forward_kinematics(Q);
+
+        h = -0.1570 - ee(2);
+        hHistory.push_back((h - last_h) /  dt);
+        last_h = h;
+        dhdt = mahi::util::mean(hHistory);
+
+        K = F(2)/h;
+
+        return G + Tau;           
+    }
+
+    virtual void imgui() override { 
+        ImGui::Checkbox("Gravity Compensation", &gcomp);
+        ImGui::DragDouble("Button Weight", &weight, 0.001f, 0, 0.5);
+        ImGui::DragDouble3("Joint Angles [rad]",Q_ref.data(), 0.001f, -1,1);
+        ImGui::DragDouble("Kb [N/m]", &Kb, 0.1f, Kb_min, Kb_max);
+        ImGui::DragDoubleRange2("Kb Range [N/m]",&Kb_min,&Kb_max);
+        ImGui::DragDouble3("Kp [N/rad]",  Kp.data(), 0.001f, 0, 100);
+        ImGui::DragDouble3("Kd [Ns/rad]", Kd.data(), 0.001f, 0, 10);
+        ImGui::Separator();
+        ImGui::BeginDisabled();
+        ImGui::DragDouble3("Tau [N/m]", Tau.data());
+        ImGui::DragDouble3("F [N]",     F.data());
+        ImGui::DragDouble("H [m]",&h);
+        ImGui::DragDouble("dH/dt [m]",&dhdt);
+        ImGui::DragDouble("Kb' [N/m]",&K);
+        ImGui::EndDisabled();
+    }
+
+    bool gcomp;
+    double weight;
+    double h;
+    double dhdt;
+    double K;
+    double Kb;
+    double Kb_min = 2;
+    double Kb_max = 200;
+    mahi::util::RingBuffer<double> hHistory;
+    Vector3d Kp, Kd, Q_ref, Tau, F;
+private:
+    double last_h;
 };
 
 struct JointSpaceIK : public ControlLaw {

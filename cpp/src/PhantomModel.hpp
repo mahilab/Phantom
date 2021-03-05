@@ -93,6 +93,9 @@ Matrix3d J(const Vector3d& Q);
 /// Computes torques required to generate forces at end effector: Tau = J(Q)' * F
 Vector3d forces_to_torques(const Vector3d& F, const Vector3d& Q);
 
+/// Computes forces generated at end effector given Tau joint torques
+Vector3d torques_to_forces(const Vector3d& Tau, const Vector3d& Q);
+
 //=============================================================================
 // DYNAMICS
 //=============================================================================

@@ -93,6 +93,11 @@ Vector3d forces_to_torques(const Vector3d& F, const Vector3d& Q) {
     return J(Q).transpose() * F;
 }
 
+Vector3d torques_to_forces(const Vector3d& Tau, const Vector3d& Q) {
+    auto Jt = J(Q).transpose();
+    return Jt.householderQr().solve(Tau);
+};
+
 Matrix3d M(const Vector3d& Q) {
     Matrix3d _M;
     PHANTOM_TRIG;

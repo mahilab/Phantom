@@ -24,6 +24,8 @@ public:
     virtual Vector3d get_velocities() = 0;    
     /// Gets the Phantom joint Torques [Nm]
     virtual Vector3d get_torques() = 0;  
+    /// Zeros the Phantom joint angles
+    virtual bool zero() = 0;
     /// Implement to draw GUI 
     virtual void imgui() { };
 };

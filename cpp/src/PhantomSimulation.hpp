@@ -43,6 +43,12 @@ public:
         Lock lock(m_mtx);
         return m_state.Tau;
     }
+    /// Zeros the Phantom joint angles
+    virtual bool zero() override {
+        Lock lock(m_mtx);
+        m_state.Q = Vector3d::Zero();
+        return true;
+    }
 private:
     /// Simulation thread implementation
     virtual void thread_func() {
